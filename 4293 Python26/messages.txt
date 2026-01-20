@@ -1,0 +1,10 @@
+New Message
+Name: juan
+Contact Information: kkk
+Reason for Contact: talk about capstone project
+------------------------------
+New Message
+Name: Ricardo
+Contact Information: rick@hotmail.com
+Reason for Contact: lab project
+------------------------------
