@@ -50,7 +50,7 @@ class ConnectFourGame:
                     self.board.add_piece(col, current_player.symbol)
                     move_is_invalid = False # If we make it to this line, move was valid
                 except InvalidMoveError as err:
-                    print(err.message) # Otherwise display why the move was not valid
+                    print(err) # Otherwise display why the move was not valid
 
             # Increment the turn count
             self.turn += 1

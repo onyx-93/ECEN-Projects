@@ -28,14 +28,14 @@ class ConnectFourBoard:
     def check_winner(self): #instance method
         """Check whether someone has won the game."""
         # TODO: Implement this function instead of just returning false
-        for row in range(self.num_rows):
-            for col in range(self.num_cols):
-                symbol = self.rows[row][col]
+        for row in range(self.num_rows): # Go through each row
+            for col in range(self.num_cols):# For each row, go through each column
+                symbol = self.rows[row][col]# Get the symbol at the current position
                 if symbol is _EMPTY:
-                    continue
+                    continue # Skip empty cells
 
                 # Check horizontal
-                if col + 3 < self.num_cols:
+                if col + 3 < self.num_cols: #
                     if (self.rows[row][col + 1] == symbol and
                         self.rows[row][col + 2] == symbol and
                         self.rows[row][col + 3] == symbol):
@@ -60,18 +60,26 @@ class ConnectFourBoard:
                     if (self.rows[row - 1][col + 1] == symbol and
                         self.rows[row - 2][col + 2] == symbol and
                         self.rows[row - 3][col + 3] == symbol):
-                        return True
-       # return False
-
+                        return True 
+        return False
+     
     def is_full(self): #instance method
         """Check whether the board is full."""
         # TODO: Implement this function instead of just returning false
-        return False
-
+        for row in range(self.num_rows): 
+            for col in range(self.num_cols):
+                if self.rows[row][col] is _EMPTY:
+                    return False # If any cell is empty, the board is not full
+        return True # If no empty cells were found, the board is full
+                   
     def add_piece(self, col, symbol): #instance method
         """Add a piece to the specified column."""
         # TODO: Add code to check if the move is valid (and raise InvalidMoveError if not)
-
+        if col < 0 or col >= self.num_cols:
+            raise InvalidMoveError(f'Column {col} is out of bounds.')
+        if self.rows[0][col] is not _EMPTY:
+            raise InvalidMoveError(f'Column {col} is full.')
+           
         # Find the first empty row in col and replace it with symbol
         for row in reversed(range(self.num_rows)):
             if self.rows[row][col] is _EMPTY:
