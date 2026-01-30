@@ -25,7 +25,6 @@ class ConsolePlayer(AbstractPlayer):
            else:
                return col
 
-# TODO: Create a CPUPlayer class which selects moves without user intervention
 class CPUPlayer(AbstractPlayer):
     def move(self, **kwargs):
         """Select a column to play in automatically."""
