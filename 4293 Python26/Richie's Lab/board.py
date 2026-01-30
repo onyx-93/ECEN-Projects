@@ -53,6 +53,7 @@ class ConnectFourBoard:
                 
         return True
 
+    
     def add_piece(self, col, symbol):
         """Add a piece to the specified column."""
         if not isinstance(col, int): # If input is not an integer
@@ -63,10 +64,8 @@ class ConnectFourBoard:
         if self.rows[0][col] != _EMPTY:
             raise InvalidMoveError("That column is full.")
 
-
-
-        # Find the first empty row in col and replace it with symbol
-        for row in reversed(range(self.num_rows)):
-            if self.rows[row][col] is _EMPTY:
+        for row in range(self.num_rows -1, -1, -1):
+            if self.rows[row][col] == _EMPTY:
                 self.rows[row][col] = symbol
-                break
+                return
+            

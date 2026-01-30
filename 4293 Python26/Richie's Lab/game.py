@@ -1,5 +1,5 @@
 from board import ConnectFourBoard, InvalidMoveError
-from player import ConsolePlayer
+from player import ConsolePlayer, CPUPlayer
 
 class ConnectFourGame:
     """Represents a Connect 4 game. Manages board and players."""
@@ -45,7 +45,7 @@ class ConnectFourGame:
             # Get the next player's move
             move_is_invalid = True
             while move_is_invalid: # Keep trying until we get a valid move
-                col = current_player.move()
+                col = current_player.move(board=self.board)
                 try:
                     self.board.add_piece(col, current_player.symbol)
                     move_is_invalid = False # If we make it to this line, move was valid
@@ -80,10 +80,20 @@ class ConnectFourGame:
                 symbol_is_invalid = not confirmation.lower().startswith('y')
         return symbol
 
+def choose_player_type(player_name):
+    while True:
+        choice = input(f"{player_name}: Human or CPU? (h/c): ").strip().lower()
+        if choice in ("h", "human"):
+            return ConsolePlayer
+        if choice in ("c", "cpu"):
+            return CPUPlayer
+        print("Please enter 'h' or 'c'. ")
 
 if __name__ == "__main__":
     # Play a new connect 4 game
-    game = ConnectFourGame()
+    p1_type = choose_player_type("Player 1")
+    p2_type = choose_player_type("Player 2")
+    game = ConnectFourGame(p1_type=p1_type, p2_type=p2_type)
 
     keep_playing = True
     while keep_playing:
