@@ -79,6 +79,9 @@ class ConnectFourBoard:
             raise InvalidMoveError(f'Column {col} is out of bounds.')
         if self.rows[0][col] is not _EMPTY:
             raise InvalidMoveError(f'Column {col} is full.')
+        if symbol is _EMPTY:
+            raise InvalidMoveError('Cannot add an empty piece to the board.')
+        
            
         # Find the first empty row in col and replace it with symbol
         for row in reversed(range(self.num_rows)):
