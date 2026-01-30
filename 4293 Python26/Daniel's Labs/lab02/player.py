@@ -16,7 +16,6 @@ class AbstractPlayer(ABC):
 class ConsolePlayer(AbstractPlayer):
     def move(self, **kwargs):
         """Get which column to play in from the user via text console"""
-       # return int(input('Enter which column to play in: '))
         while True:
            try:
                col = int(input('Enter which column to play in: '))
