@@ -50,14 +50,16 @@ class ConnectFourGame:
                     self.board.add_piece(col, current_player.symbol)
                     move_is_invalid = False # If we make it to this line, move was valid
                 except InvalidMoveError as err:
-                    print(err.message) # Otherwise display why the move was not valid
+                    print(err) # Otherwise display why the move was not valid
 
             # Increment the turn count
             self.turn += 1
 
             # Check for winners
             if self.board.check_winner():
-                print(f'{current_player.name} wins!')
+                print()
+                self.board.display()
+                print(f'\n\t{current_player.name} wins!\n')
                 break # Get out of the while loop without triggering the else clause
         else:
             # If we reach this line, the board is full
@@ -86,4 +88,4 @@ if __name__ == "__main__":
     keep_playing = True
     while keep_playing:
         game.start()
-        keep_playing = input('Play again? (y/N): ').lower().startswith('y')
+        keep_playing = input('\n\tPlay again? (y/N): ').lower().startswith('y')

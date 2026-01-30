@@ -55,7 +55,15 @@ class ConnectFourBoard:
 
     def add_piece(self, col, symbol):
         """Add a piece to the specified column."""
-        # TODO: Add code to check if the move is valid (and raise InvalidMoveError if not)
+        if not isinstance(col, int): # If input is not an integer
+            raise InvalidMoveError("Column must be an integer.")
+        if col < 0 or col >= self.num_cols: # If input is integer out of bounds
+            raise InvalidMoveError(f"Column must be between 0 and {self.num_cols - 1}.")
+        
+        if self.rows[0][col] != _EMPTY:
+            raise InvalidMoveError("That column is full.")
+
+
 
         # Find the first empty row in col and replace it with symbol
         for row in reversed(range(self.num_rows)):
