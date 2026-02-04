@@ -97,18 +97,7 @@ if __name__ == "__main__":
     print("Choose your opponent!")
     
     
-    while True:
-        choice = input("Enter 1 for human vs human, or 2 for human vs computer: ").strip()
-
-        try:
-            choice_num = int(choice)          # Try to convert to integer
-            if choice_num in (1, 2):
-                break                         # Valid input → exit the loop
-            else:
-                print("Please enter either 1 or 2.")
-        except ValueError:
-            # Happens when input can't be converted to int (letters, empty, etc.)
-            print("Invalid input. Please enter 1 or 2.\n")
+    choice = input("Enter 1 for human or 2 for computer: ").strip()
 
     if choice == "2":
         # Human vs CPU
@@ -117,15 +106,7 @@ if __name__ == "__main__":
         # Default: Human vs Human
         game = ConnectFourGame()
     
-while True:
+    keep_playing = True
+    while keep_playing:
         game.start()
-        
-        while True:
-            answer = input('Play again? (y/n): ').strip().lower()
-            if answer in ('y', 'yes', ''):
-                break  # continue outer loop → play again
-            if answer in ('n', 'no'):
-                print("Thanks for playing!")
-                exit()   # or just break outer loop and let program end
-            print('Please answer y or n.\n')
-            
+        keep_playing = input('Play again? (y/N): ').lower().startswith('y')
