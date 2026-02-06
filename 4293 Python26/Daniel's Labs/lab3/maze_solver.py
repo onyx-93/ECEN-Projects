@@ -2,47 +2,13 @@ import numpy as np
 from maze import Maze
 from queue import PriorityQueue
 
-# TODO: Write code to compute a solution to the maze.
-'''“The A* algorithm was adapted from a grid-based
-    pathfinding implementation and rewritten to
-    operate on the maze’s boolean grid representation.”'''
-    
-
-
-def heuristic(a, b):
-    """Manhattan distance heuristic"""
-    return abs(a[0] - b[0]) + abs(a[1] - b[1])
-
-
-def get_neighbors(pos, maze):
-    """Return valid neighboring cells"""
-    x, y = pos
-    neighbors = []
-
-    for dx, dy in [(1,0), (-1,0), (0,1), (0,-1)]:
-        nx, ny = x + dx, y + dy
-
-        if 0 <= nx < maze.shape[0] and 0 <= ny < maze.shape[1]:
-            if maze[nx, ny]:  # floor, not wall
-                neighbors.append((nx, ny))
-
-    return neighbors
-
-
-def reconstruct_path(came_from, current):
-    """Reconstruct path from start to goal"""
-    path = [current]
-    while current in came_from:
-        current = came_from[current]
-        path.append(current)
-    path.reverse()
-    return path
-
-
-def solve_maze_astar(maze, start, goal):
+def a_star(start, goal, get_neighbors):
     """
-    A* pathfinding on a boolean maze.
-    Returns a list of (x, y) positions from start to goal.
+    start: start node
+    goal: goal node
+    get_neighbors(node): returns iterable of neighbor nodes
+
+    Returns: list of nodes representing the path, or None if no path
     """
 
     open_set = PriorityQueue()
@@ -62,10 +28,10 @@ def solve_maze_astar(maze, start, goal):
         if current == goal:
             return reconstruct_path(came_from, current)
 
-        for neighbor in get_neighbors(current, maze):
-            tentative_g = g_score[current] + 1
+        for neighbor in get_neighbors(current):
+            tentative_g = g_score[current] + 1  # cost between nodes
 
-            if tentative_g < g_score.get(neighbor, float("inf")):
+            if neighbor not in g_score or tentative_g < g_score[neighbor]:
                 came_from[neighbor] = current
                 g_score[neighbor] = tentative_g
                 f_score[neighbor] = tentative_g + heuristic(neighbor, goal)
@@ -74,4 +40,17 @@ def solve_maze_astar(maze, start, goal):
                     open_set.put((f_score[neighbor], neighbor))
                     open_set_hash.add(neighbor)
 
-    return None  # No path found
+    return None
+
+def heuristic(a, b):
+    # a and b are (row, col)
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+def reconstruct_path(came_from, current):
+    path = [current]
+    while current in came_from:
+        current = came_from[current]
+        path.append(current)
+    path.reverse()
+    return path
+
