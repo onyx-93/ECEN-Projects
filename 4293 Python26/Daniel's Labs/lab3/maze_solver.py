@@ -2,14 +2,15 @@ import numpy as np
 from maze import Maze
 from queue import PriorityQueue
 
-def a_star(start, goal, get_neighbors):
-    """
-    start: start node
-    goal: goal node
-    get_neighbors(node): returns iterable of neighbor nodes
+def logical_to_grid(pos):
+    """Convert logical maze coordinates to grid coordinates"""
+    x, y = pos
+    return (2*x + 1, 2*y + 1)
 
-    Returns: list of nodes representing the path, or None if no path
-    """
+
+def a_star(maze):
+    start = logical_to_grid(maze.start_position)
+    goal  = logical_to_grid(maze.goal_position)
 
     open_set = PriorityQueue()
     open_set.put((0, start))
@@ -28,8 +29,8 @@ def a_star(start, goal, get_neighbors):
         if current == goal:
             return reconstruct_path(came_from, current)
 
-        for neighbor in get_neighbors(current):
-            tentative_g = g_score[current] + 1  # cost between nodes
+        for neighbor in get_neighbors(current, maze.maze):
+            tentative_g = g_score[current] + 1
 
             if neighbor not in g_score or tentative_g < g_score[neighbor]:
                 came_from[neighbor] = current
@@ -41,6 +42,7 @@ def a_star(start, goal, get_neighbors):
                     open_set_hash.add(neighbor)
 
     return None
+
 
 def heuristic(a, b):
     # a and b are (row, col)
@@ -54,3 +56,16 @@ def reconstruct_path(came_from, current):
     path.reverse()
     return path
 
+def get_neighbors(pos, maze):
+    """Return valid neighboring cells"""
+    x, y = pos
+    neighbors = []
+
+    for dx, dy in [(1,0), (-1,0), (0,1), (0,-1)]:
+        nx, ny = x + dx, y + dy
+
+        if 0 <= nx < maze.shape[0] and 0 <= ny < maze.shape[1]:
+            if maze[nx, ny]:  # floor, not wall
+                neighbors.append((nx, ny))
+
+    return neighbors

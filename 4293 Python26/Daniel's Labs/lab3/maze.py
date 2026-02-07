@@ -17,7 +17,7 @@ class Maze:
         visited = np.zeros(shape=(size,size), dtype=bool)
         def generate_maze_from_cell(position):
             # Local function to allow recursion, but prevent calling outside of the initializer
-            x, y = position # unpack position
+            x, y = position # unpack pos ition
             visited[x, y] = True # Mark the current position as visited
             self.maze[2*x+1, 2*y+1] = _FLOOR # Mark the position in the maze as floor
 
@@ -48,9 +48,3 @@ class Maze:
         for row in str_maze:
             print(''.join([c for c in row]))
         print('  '*(self.shape[0]-3), 'FINISH')
-
-
-
-if __name__ == "__main__":
-    m = Maze(16)
-    m.display()

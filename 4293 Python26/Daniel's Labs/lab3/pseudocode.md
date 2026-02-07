@@ -196,3 +196,16 @@ def solve_maze_astar(maze, start, goal):
                     open_set_hash.add(neighbor)
 
     return None  # No path found
+
+
+
+
+
+   while True:
+            if event.key == 'y':
+                # Restart the game
+                interactive_maze()
+                return
+            elif event.key == 'n':
+                plt.close(fig)
+                return
