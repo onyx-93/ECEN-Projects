@@ -19,27 +19,31 @@ def interactive_maze():
     player_grid = logical_to_grid(player_pos)
     goal_grid = logical_to_grid(goal_pos)
     
-    # FIX 2: Track game state to stop movement after winning
+    # Track game state to stop movement after winning
     game_over = False
     show_solution = False
 
     fig, ax = plt.subplots(figsize=(7,7))
-    plt.title("Maze Game – WASD to move")
-
+    
+    # Disable default 's' key binding for saving the figure, so we can use it for showing solution
+    plt.rcParams['keymap.save'] = '' 
+       
     def redraw():
         ax.clear()
-        # Walls = 0 (black), floors = 1 (white)
-        ax.imshow(np.where(maze.maze, 1, 0), cmap="gray", origin="upper")
+        ax.set_title("Maze Game")
+        
+        # floors = 0 (black), Walls = 1 (white)
+        ax.imshow(np.where(maze.maze, 0, 1), cmap="gray", origin="upper")
         
         # Draw solution if requested AND it exists
         if show_solution and solution_grid:
             ys = [p[0] for p in solution_grid]
             xs = [p[1] for p in solution_grid]
-            ax.plot(xs, ys, color="blue", linewidth=3, alpha=0.7)
+            ax.plot(xs, ys, color="fuchsia", linewidth=3, alpha=0.7)
 
         # Player & goal
         ax.scatter(player_grid[1], player_grid[0], c="red", s=200, marker="o", label="You")
-        ax.scatter(goal_grid[1], goal_grid[0], c="lime", s=200, marker="*", label="Goal")
+        ax.scatter(goal_grid[1], goal_grid[0], c="lime", s=200, marker="o", label="Goal")
 
         ax.set_xticks([]); ax.set_yticks([])
         
@@ -49,16 +53,16 @@ def interactive_maze():
                     transform=ax.transAxes, ha="center", va="center",
                     fontsize=20, color="lime", bbox=dict(facecolor='black', alpha=0.8))
         else:
-            ax.text(0.5, -0.08, "U: up  D: down  L: left  R: right   H: toggle hint   Q: quit",
+            ax.text(0.5, -0.08, "Controls\nW: up  A: left  S: down  D: right   H: hint   Q: quit",
                     transform=ax.transAxes, ha="center", fontsize=10)
 
         plt.draw()
 
     def on_key(event):
-        # FIX 3: Include game_over in nonlocal scope
+        # Include game_over in nonlocal scope
         nonlocal player_pos, player_grid, show_solution, game_over
 
-        
+    
         if event.key == 'y':
             plt.close(fig) # Close current figure before starting a new game
             interactive_maze() # Restart the game
@@ -77,28 +81,33 @@ def interactive_maze():
             redraw()
             return
 
-        # FIX 4: Renamed dx/dy to d_row/d_col for clarity (Row is Y-axis!)
+        # Renamed dx/dy to d_row/d_col for clarity (Row is Y-axis!)
         d_row, d_col = 0, 0
-        if event.key ==   'u': d_row = -1  # Up (Row decreases)
-        elif event.key == 'd': d_row = 1 # Down (Row increases)
-        elif event.key == 'l': d_col = -1 # Left (Col decreases)
-        elif event.key == 'r': d_col = 1 # Right (Col increases)
+        if event.key ==   'w': d_row = -1  # Up (Row decreases)
+        elif event.key == 'a': d_col = -1 # Left (Col decreases)
+        elif event.key == 's': d_row = 1 # Down (Row increases)
+        elif event.key == 'd': d_col = 1 # Right (Col increases)
         else:
             return
 
         new_logical = (player_pos[0] + d_row, player_pos[1] + d_col)
         new_grid = logical_to_grid(new_logical)
+        
+        # To check for walls, we need to look at the cell between the current position and the new position
+        wall_grid = ((player_grid[0] + new_grid[0])//2, (player_grid[1] + new_grid[1])//2)
 
         # Boundary and Wall Check
         if (0 <= new_grid[0] < maze.maze.shape[0] and
             0 <= new_grid[1] < maze.maze.shape[1] and
-            maze.maze[new_grid[0], new_grid[1]]): # Assumes 1/True is floor
+            0 <= wall_grid[0] <maze.maze.shape[0] and
+            0 <= wall_grid[1]<maze.maze.shape[1]):
+            
+            if maze.maze[wall_grid] and maze.maze[new_grid]: # Check if there's a wall in the way
+                player_pos = new_logical
+                player_grid = new_grid
 
-            player_pos = new_logical
-            player_grid = new_grid
-
-            if player_pos == goal_pos:
-                game_over = True
+                if player_pos == goal_pos:
+                    game_over = True
             
             redraw()
 

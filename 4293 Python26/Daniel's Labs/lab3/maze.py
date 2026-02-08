@@ -37,9 +37,7 @@ class Maze:
                     # Mark the connecting piece of the maze as floor
                     self.maze[x+neighbor_x+1, y+neighbor_y+1] = _FLOOR
                     generate_maze_from_cell(neighbor)
-        generate_maze_from_cell(self.goal_position)
-        self.maze[0:2, 0:2] = _FLOOR # Indicate start area. May remove this if desired.
-        self.maze[-2:, -2:] = _FLOOR # Indicate goal area. May remove this if desired.
+        generate_maze_from_cell(self.goal_position) # Start the maze generation from the goal position to ensure it's reachable
 
     def display(self):
         """Display the maze, using block characters for floors and empty spaces for walls"""
