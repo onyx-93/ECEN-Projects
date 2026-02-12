@@ -30,7 +30,7 @@ def interactive_maze():
        
     def redraw():
         ax.clear()
-        ax.set_title("Maze Game")
+        ax.set_title("Maze Game\n (press F for full screen)")
         
         # floors = 0 (black), Walls = 1 (white)
         ax.imshow(np.where(maze.maze, 0, 1), cmap="gray", origin="upper")
