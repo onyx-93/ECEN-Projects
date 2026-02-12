@@ -11,9 +11,9 @@ class AbstractPlayer(ABC):
         """Return an integer representing the column where the player intends to play a piece."""
 
 
-class ConsolePlayer(AbstractPlayer):
-    def move(self, **kwargs):
-        """Get which column to play in from the user via text console"""
+class ConsolePlayer(AbstractPlayer): # For the input to check if the move is valid I went ahead and used generative AI to make the error catch more robust
+    def move(self, **kwargs):        # the initial solutions did not convince me so I chosed for a input taking function that checks the input before is used
+        """Get which column to play in from the user via text console""" # The following function chechs if the move is in a valid column and if it is an integer, if these two are satisfied the function will continue otherwise it will crash
         board = kwargs.get("board", None)
         max_col = (board.num_cols - 1) if board is not None else 6
 
@@ -42,3 +42,4 @@ class CPUPlayer(AbstractPlayer):
         print(f"{self.name} chooses colum {col}")
         return col
 
+# Link to chat conversation: https://www.perplexity.ai/search/i-want-to-implement-the-add-pi-WCcmPdoOTIa.XcKeOJirqQ#0

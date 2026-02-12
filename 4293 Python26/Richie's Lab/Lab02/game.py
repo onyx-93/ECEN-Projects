@@ -80,7 +80,7 @@ class ConnectFourGame:
                 symbol_is_invalid = not confirmation.lower().startswith('y')
         return symbol
 
-def choose_player_type(player_name):
+def choose_player_type(player_name): # CPU or human player function definition
     while True:
         choice = input(f"{player_name}: Human or CPU? (h/c): ").strip().lower()
         if choice in ("h", "human"):

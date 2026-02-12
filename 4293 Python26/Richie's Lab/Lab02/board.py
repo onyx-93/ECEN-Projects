@@ -25,8 +25,8 @@ class ConnectFourBoard:
             print(f'\t|{"|".join(self.rows[row])}|')
         print('\t ' + ' '.join([str(col) for col in range(self.num_cols)]))
 
-    def check_winner(self):
-        """Check whether someone has won the game."""
+    def check_winner(self): # This winner check function was a great move from the AI feedback, instead of doing a brute force scan, it declares direction vectors of magnitude 1 and on each cell scans on that direction to see
+        """Check whether someone has won the game.""" # if there are any symbols that may match the player's on that cell
         directions = [(0, 1), (1, 0), (1, 1), (1, -1)] # List of tuples (vectors) for directions left, down, diagonals
         for r in range(self.num_rows):
             for c in range(self.num_cols): # Loops through matrix to read spaces and detect which one is empty
@@ -44,7 +44,7 @@ class ConnectFourBoard:
                     
         return False
 
-    def is_full(self):
+    def is_full(self): # Simple brute force scanning
         """Check whether the board is full."""
         for r in range(self.num_rows):
             for c in range(self.num_cols):
@@ -54,7 +54,7 @@ class ConnectFourBoard:
         return True
 
     
-    def add_piece(self, col, symbol):
+    def add_piece(self, col, symbol): # The rest of this code was developed using generative AI to make sure the idea for errors was solid regarding to handle them
         """Add a piece to the specified column."""
         if not isinstance(col, int): # If input is not an integer
             raise InvalidMoveError("Column must be an integer.")
