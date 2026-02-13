@@ -125,7 +125,7 @@ solver = MazeSolver(m)
 
 path = solver.solve()
 
-if path:
-    solver.displayS(path)
-else:
-    print("No solution found")
+# if path:
+#     solver.displayS(path)
+# else:
+#     print("No solution found")
