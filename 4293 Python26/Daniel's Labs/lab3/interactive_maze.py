@@ -4,7 +4,7 @@ from maze import Maze
 from maze_solver import a_star, logical_to_grid
 
 def interactive_maze():
-    maze = Maze(16) # You can change the size here (e.g., Maze(8) for a larger maze)
+    maze = Maze(16) # size of maze
     player_pos = maze.start_position
     goal_pos = maze.goal_position
 
@@ -23,14 +23,15 @@ def interactive_maze():
     game_over = False
     show_solution = False
 
-    fig, ax = plt.subplots(figsize=(7,7))
+    # defines size of interactive window (width, height)
+    fig, ax = plt.subplots(figsize=(7,5))
     
     # Disable default 's' key binding for saving the figure, so we can use it for showing solution
     plt.rcParams['keymap.save'] = '' 
        
     def redraw():
         ax.clear()
-        ax.set_title("Maze Game\n (press F for full screen)")
+        ax.set_title("Maze Game")
         
         # floors = 0 (black), Walls = 1 (white)
         ax.imshow(np.where(maze.maze, 0, 1), cmap="gray", origin="upper")
