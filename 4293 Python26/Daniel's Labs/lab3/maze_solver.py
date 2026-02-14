@@ -2,6 +2,10 @@ import numpy as np
 from maze import Maze
 from queue import PriorityQueue
 
+# I found a script for A* online, but it was designed for a different maze representation.
+# I asked chatGPT to extract the A* algorithm from that script and build a template, and then I filled in the details to make it work with my Maze.
+
+
 def logical_to_grid(pos):
     """
     Translates logical cell coordinates (row, col) to the actual 

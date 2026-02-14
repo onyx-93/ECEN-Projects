@@ -26,9 +26,10 @@ def interactive_maze():
     # defines size of interactive window (width, height)
     fig, ax = plt.subplots(figsize=(7,5))
     
-    # Disable default 's' key binding for saving the figure, so we can use it for showing solution
+    # ChatGPT provided me this line to disable default 's' key binding for saving the figure, so we can use it for showing solution ################################
     plt.rcParams['keymap.save'] = '' 
        
+    # ChatGPT helped me write this function to redraw the maze and all elements based on the current game state. ############################################################
     def redraw():
         ax.clear()
         ax.set_title("Maze Game")
@@ -59,6 +60,8 @@ def interactive_maze():
 
         plt.draw()
 
+    # ChatGPT helped me write this function to handle key presses and update the game state accordingly. ####################################################
+    # I then filled in the details to make it work with my Maze.#######################################
     def on_key(event):
         # Include game_over in nonlocal scope
         nonlocal player_pos, player_grid, show_solution, game_over
