@@ -26,7 +26,7 @@ def interactive_maze():
     # defines size of interactive window (width, height)
     fig, ax = plt.subplots(figsize=(7,5))
     
-    # ChatGPT provided me this line to disable default 's' key binding for saving the figure, so we can use it for showing solution ################################
+    # ChatGPT provided me this line to disable default 's' key binding for saving the figure ################################
     plt.rcParams['keymap.save'] = '' 
        
     # ChatGPT helped me write this function to redraw the maze and all elements based on the current game state. ############################################################
