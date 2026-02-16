@@ -2,12 +2,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import random
 import math
+import pandas as pd
 
 class TSP:
     def __init__(self, cities):
         """Initialize the TSP solver with the 20 cities (2 x 20 matrix)"""
         self.cities = np.array(cities)          # shape: (2, 20)
-        self.N = 20
+        self.N = 101
         
         # Start with a random tour
         self.tour = list(range(self.N))
@@ -21,9 +22,9 @@ class TSP:
         self.best_length = self.current_length
         
         # Simulated Annealing parameters (exactly from lecture)
-        self.T = 2.0
-        self.alpha = 0.99
-        self.max_iter = 1000  # you can increase this if you want better results
+        self.T = 200.0
+        self.alpha = 0.999
+        self.max_iter = 10**5  # you can increase this if you want better results
 
     def tour_length(self, tour):
         """Calculate total Euclidean distance of a tour (including return to start)"""
