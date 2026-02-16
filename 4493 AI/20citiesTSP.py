@@ -2,15 +2,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 import random
 import math
-import pandas as pd
 
 class TSP:
     def __init__(self, cities):
-        """Initialize the TSP solver with the 101 cities"""
-        df = pd.read_csv('101-City Problem Coordinates.csv', header=None)           # change 'your_filename.csv' to the actual name
-        self.cities = df[['x', 'y']].to_numpy().T      # assumes columns named 'x' and 'y' — adjust names if different
-        self.N = self.cities.shape[1]                   # automatically gets 101 (or whatever number of rows)
-
+        """Initialize the TSP solver with the 20 cities (2 x 20 matrix)"""
+        self.cities = np.array(cities)          # shape: (2, 20)
+        self.N = 20
+        
         # Start with a random tour
         self.tour = list(range(self.N))
         random.shuffle(self.tour)
@@ -23,9 +21,9 @@ class TSP:
         self.best_length = self.current_length
         
         # Simulated Annealing parameters (exactly from lecture)
-        self.T = 200.0
-        self.alpha = 0.999
-        self.max_iter = 10**5  # you can increase this if you want better results
+        self.T = 2.0
+        self.alpha = 0.99
+        self.max_iter = 1000  # you can increase this if you want better results
 
     def tour_length(self, tour):
         """Calculate total Euclidean distance of a tour (including return to start)"""
@@ -39,7 +37,6 @@ class TSP:
         c1 = self.cities[:, tour[-1]]
         c2 = self.cities[:, tour[0]]
         total += math.sqrt((c1[0] - c2[0])**2 + (c1[1] - c2[1])**2)
-        
         return total
 
     def solve(self):
@@ -99,7 +96,7 @@ class TSP:
             plt.text(xi + 0.01, yi + 0.01, str(i), fontsize=12)
         
         plt.plot(x, y, 'b-', linewidth=2, label='Best Tour')
-        plt.title(f"Best TSP Tour (Length = {self.best_length:.4f})")
+        plt.title(f"Best TSP Tour (Length = {self.best_length:.2f})")
         plt.xlabel("X coordinate")
         plt.ylabel("Y coordinate")
         plt.legend()
@@ -114,9 +111,7 @@ cities = np.array([
      0.8200, 0.3296, 0.1649, 0.3025, 0.8192, 0.9392, 0.8191, 0.4351, 0.8646, 0.6768]
 ])
 
-# Create solver and run
-solver = TSP(cities)
-best_tour, best_length = solver.solve()
-
-# Display the path
-solver.plot()
+if __name__ == "__main__":
+    solver = TSP(cities)    # Create solver and run
+    best_tour, best_length = solver.solve()
+    solver.plot()   # Display the path
