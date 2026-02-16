@@ -6,10 +6,11 @@ import pandas as pd
 
 class TSP:
     def __init__(self, cities):
-        """Initialize the TSP solver with the 20 cities (2 x 20 matrix)"""
-        self.cities = np.array(cities)          # shape: (2, 20)
-        self.N = 101
-        
+        """Initialize the TSP solver with the 101 cities"""
+        df = pd.read_csv('101-City Problem Coordinates.csv', header=None)           # change 'your_filename.csv' to the actual name
+        self.cities = df[['x', 'y']].to_numpy().T      # assumes columns named 'x' and 'y' — adjust names if different
+        self.N = self.cities.shape[1]                   # automatically gets 101 (or whatever number of rows)
+
         # Start with a random tour
         self.tour = list(range(self.N))
         random.shuffle(self.tour)
