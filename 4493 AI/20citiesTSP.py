@@ -20,7 +20,7 @@ class TSP:
         self.best_tour = self.tour.copy()
         self.best_length = self.current_length
         
-        # Simulated Annealing parameters (unchanged as requested)
+        # Simulated Annealing parameters
         self.T = 5.0
         self.alpha = 0.995
         self.max_iter = 10**4
@@ -94,7 +94,7 @@ class TSP:
         x = np.append(x, x[0])
         y = np.append(y, y[0])
         
-        plt.figure(figsize=(8, 5))
+        plt.figure(figsize=(8, 8))
         plt.scatter(self.cities[0], self.cities[1], c='red', s=50, label='Cities')
         
         for i, (xi, yi) in enumerate(zip(self.cities[0], self.cities[1])):
@@ -123,6 +123,7 @@ if __name__ == "__main__":
 
     print("Running 20 independent trials with 2-opt neighborhood...\n")
 
+    # Run 20 independent trials and keep track of the best solution found
     for trial in range(20):
         solver = TSP(cities)
         tour, length = solver.solve()
