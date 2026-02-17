@@ -39,8 +39,10 @@ class TSP:
         total += math.sqrt((c1[0] - c2[0])**2 + (c1[1] - c2[1])**2)
         return total
 
+    # 
     def generate_2opt_neighbor(self, tour):
-        """Generate a new tour using a simple 2-opt move (reverses a segment)"""
+        """Method added to improve the neighborhood search.
+           It generates a new tour using a simple 2-opt move (reverses a segment)"""
         new_tour = tour.copy()
         # Choose two distinct positions i < j (at least 2 cities apart)
         i = random.randint(0, self.N - 3)
