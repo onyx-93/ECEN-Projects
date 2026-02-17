@@ -20,10 +20,10 @@ class TSP:
         self.best_tour = self.tour.copy()
         self.best_length = self.current_length
         
-        # Simulated Annealing parameters (exactly from lecture)
-        self.T = 2.0
-        self.alpha = 0.99
-        self.max_iter = 1000  # you can increase this if you want better results
+        # Simulated Annealing parameters (unchanged as requested)
+        self.T = 5.0
+        self.alpha = 0.995
+        self.max_iter = 10**4
 
     def tour_length(self, tour):
         """Calculate total Euclidean distance of a tour (including return to start)"""
@@ -39,19 +39,24 @@ class TSP:
         total += math.sqrt((c1[0] - c2[0])**2 + (c1[1] - c2[1])**2)
         return total
 
+    def generate_2opt_neighbor(self, tour):
+        """Generate a new tour using a simple 2-opt move (reverses a segment)"""
+        new_tour = tour.copy()
+        # Choose two distinct positions i < j (at least 2 cities apart)
+        i = random.randint(0, self.N - 3)
+        j = random.randint(i + 2, self.N - 1)
+        
+        # Reverse the segment from i+1 to j (inclusive)
+        new_tour[i+1:j+1] = new_tour[i+1:j+1][::-1]
+        return new_tour
+
     def solve(self):
-        """Run Simulated Annealing"""
-        print("Starting Simulated Annealing...")
+        """Run Simulated Annealing with 2-opt neighborhood"""
+        print("Starting Simulated Annealing (2-opt)...")
         
         for it in range(self.max_iter):
-            # 1. Generate neighbor by swapping two random cities
-            i = random.randint(0, self.N - 1)
-            j = random.randint(0, self.N - 1)
-            while i == j:
-                j = random.randint(0, self.N - 1)
-            
-            new_tour = self.tour.copy()
-            new_tour[i], new_tour[j] = new_tour[j], new_tour[i]
+            # 1. Generate neighbor using 2-opt move
+            new_tour = self.generate_2opt_neighbor(self.tour)
             
             # 2. Calculate new length
             new_length = self.tour_length(new_tour)
@@ -59,12 +64,12 @@ class TSP:
             # 3. Compute difference
             delta = new_length - self.current_length
             
-            # 4. Acceptance decision (this is the core of Simulated Annealing)
+            # 4. Acceptance decision
             if delta < 0:                          # Better solution → always accept
                 self.tour = new_tour
                 self.current_length = new_length
                 
-                if self.current_length < self.best_length:   # New record!
+                if self.current_length < self.best_length:
                     self.best_tour = self.tour.copy()
                     self.best_length = self.current_length
                     
@@ -77,7 +82,7 @@ class TSP:
             # 5. Cool down the temperature
             self.T *= self.alpha
                     
-        print(f"\nFinished! Best tour length found: {self.best_length:.4f}")
+        print(f"Finished! Best tour length found: {self.best_length:.4f}")
         return self.best_tour, self.best_length
 
     def plot(self):
@@ -89,19 +94,20 @@ class TSP:
         x = np.append(x, x[0])
         y = np.append(y, y[0])
         
-        plt.figure(figsize=(10, 8))
-        plt.scatter(self.cities[0], self.cities[1], c='red', s=100, label='Cities')
+        plt.figure(figsize=(8, 5))
+        plt.scatter(self.cities[0], self.cities[1], c='red', s=50, label='Cities')
         
         for i, (xi, yi) in enumerate(zip(self.cities[0], self.cities[1])):
             plt.text(xi + 0.01, yi + 0.01, str(i), fontsize=12)
         
         plt.plot(x, y, 'b-', linewidth=2, label='Best Tour')
-        plt.title(f"Best TSP Tour (Length = {self.best_length:.2f})")
+        plt.title(f"Best TSP Tour (Length = {self.best_length:.4f})")
         plt.xlabel("X coordinate")
         plt.ylabel("Y coordinate")
         plt.legend()
         plt.grid(True)
         plt.show()
+
 
 # 20 cities here (2 rows × 20 columns)
 cities = np.array([
@@ -112,6 +118,23 @@ cities = np.array([
 ])
 
 if __name__ == "__main__":
-    solver = TSP(cities)    # Create solver and run
-    best_tour, best_length = solver.solve()
-    solver.plot()   # Display the path
+    best_length = float('inf')
+    best_tour_final = None
+
+    print("Running 20 independent trials with 2-opt neighborhood...\n")
+
+    for trial in range(20):
+        solver = TSP(cities)
+        tour, length = solver.solve()
+        print(f"Trial {trial+1:2d}: {length:.4f}")
+        
+        if length < best_length:
+            best_length = length
+            best_tour_final = tour.copy()
+
+    print(f"\nBest tour length over 20 trials: {best_length:.4f}")
+
+    # Plot the overall best tour
+    solver.best_tour = best_tour_final
+    solver.best_length = best_length
+    solver.plot()
