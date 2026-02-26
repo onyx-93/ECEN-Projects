@@ -12,7 +12,7 @@ plt.rcParams['keymap.save'].remove('s')
 
 def main():
     
-    m = Maze(5)
+    m = Maze(7)
     grid = m.maze # Boolean array
 
     solver = MazeSolver(m)
@@ -46,7 +46,7 @@ def main():
         bbox=dict(facecolor="white", alpha=0.7, edgecolor="gray")
     )
     win_message.set_visible(False)
-    ax.imshow(grid, cmap='gray_r', interpolation="nearest")
+    ax.imshow(grid, cmap='copper_r', interpolation="nearest")
     # imshow() uses (x=column, y=row), so when plotting we must inver order
     start_r, start_c = start_cell
     goal_r, goal_c = goal_cell
@@ -162,3 +162,7 @@ if __name__ == "__main__":
     # Any code in this block will be run when this file is executed directly
     print("You must have run `python interactive_maze.py`")
     main()
+
+# This code was completed and developed using generative AI, which was incredibly useful to determine structure, use of sophisticated matplot functions (sophisticated for me).
+# Also, for troubleshooting the use of AI was incredibly helpful to properly get around annoying bugs, improve the functionality of the code, and make quick checks on structure and syntax.
+# Ricardo Landeros Aranda | ECEN 4392 Python for Engineers | Feb 16th 2026

@@ -43,7 +43,7 @@ class Maze:
 
     def display(self, path=None):
         """Display the maze, using block characters for floors and empty spaces for walls"""
-        str_maze = np.where(self.maze, '██', '  ')
+        str_maze = np.where(self.maze, '▒▒', '██')
         print('START')
         for row in str_maze:
             print(''.join([c for c in row]))
@@ -54,3 +54,4 @@ class Maze:
 if __name__ == "__main__":
     m = Maze(5)
     m.display()
+

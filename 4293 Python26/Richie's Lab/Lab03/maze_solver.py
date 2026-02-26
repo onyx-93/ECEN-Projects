@@ -125,7 +125,19 @@ solver = MazeSolver(m)
 
 path = solver.solve()
 
+
+# The code block below has been commented out since the interactive maze utilizes this maze solution, leaving this block uncommented will print a different maze solved in the terminal which is undesired.
+# Else it can be uncommented
+
 # if path:
+#     print("\n\tSolution\n")
 #     solver.displayS(path)
+#     print("\n\tNon-Solved Maze\n")
+#     m.display()
+#     print()
 # else:
 #     print("No solution found")
+
+# This code was built and approached using generative AI, since the maze code and the development of the same seems messy and not friendly to begginers in programming like me.
+# AI proved to be a fantastic tool to understand the maze code, to then give structure, and solution to the maze created. 
+
