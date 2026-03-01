@@ -44,13 +44,38 @@ def p3_scal(x):
 
 # ================================== Problem 4 Functions =================================
 
+# Scalar versions of functions
+
+def p4_func_one(x):
+    return -0.87*x**2 + 1.65*x + 8.25
+
+def p4_dfunc_one(x):    # Derivative of p4_func_one
+    return -1.74*x + 1.65
+
+
+def p4_funct_two(x):
+    return 0.7*x**3 - 3.7*x**2 + 6.31*x -1.9
+
+def p4_dfunct_two(x):   # Derivative of p4_func_two
+    return  2.1*x**2 - 7.4*x + 6.31
 
 
 # ================================== Problem 5 Functions =================================
 
+# Functions problem 5. -(theta)^3 + 3sin(theta) + cos(theta) + 9 | Vector version
 
+def p5_vect(x):
+    return -x**3 + 3*np.sin(x) + np.cos(x) + 9
+
+
+# Functions problem 5. -(theta)^3 + 3sin(theta) + cos(theta) + 9 | Scalar version
+
+def p5_scalar(x):
+    return -x**3 + 3*math.sin(x) + math.cos(x) + 9
 
 # ================================== Problem 6 Functions =================================
+
+# Only need scalar version of function
 
 def p6_scal(x):
     return -0.3*x**4 + 1.8*x**3 - 1.2*x**2 + 2*x
@@ -122,7 +147,7 @@ def bisection(f, a, b, tol=1e-9, max_it=100):
 default_output_p2, iterations_p2, ls_bisection = bisection(f_scalar_p2, -1, 1, 10e-4)
 # print(f"\n\tThe number of iterations for cos(theta) - theta is: {iterations_p2}\n")
 
-# # Result was 10
+# -- Result was 10 --
 
 # values_xrange_p2 = np.linspace(-10, 10, 100)
 # values_yrange_p2 = f_vector_plot_p2(values_xrange_p2)
@@ -227,7 +252,51 @@ def fixed_point(f, guess, tol=1e-9, max_it=100):
 #                                   --- Problem 4 ---
 # ========================================================================================
 
+def newton_raphson(f, df, x0, tol=1e-8, max_it=100):
+    x = x0
 
+    for i in range(max_it):
+        fx = f(x)
+        dfx = df(x)
+
+        if abs(dfx) < 1e-12:
+            raise ValueError("Derivative too small -- risk of division by zero.")
+        
+        x_next = x - fx/dfx
+
+        if abs(x_next - x) < tol:
+            return x_next, i
+        
+        x = x_next
+
+    raise ValueError("\n\tFunction did not converge\n")
+
+# Plotting and finding roots graphically
+
+# x_vals = np.linspace(-4, 6, 100)
+# y_vals_f1 = p4_func_one(x_vals)
+# y_vals_f2 = p4_funct_two(x_vals)
+
+# plt.plot(x_vals, y_vals_f1, label="$f(x)_1$")
+# plt.plot(x_vals, y_vals_f2, label="$f(x)_2$")
+# plt.ylim(-10, 10)
+# plt.grid(True)
+# plt.legend()
+# plt.show()
+
+# Roots for f(x)_1: x1 = -2.273, x2 = 4.17
+# Root for f(x)_2: x1 = 0.381
+
+# root1_nr_f1, iterf1 = newton_raphson(p4_func_one, p4_dfunc_one, 5)
+# print(f"First root of f(x)_1 : {root1_nr_f1:.4f}")  # Approximated root: 4.1704
+# root2_nr_f1, iterf1_r2 = newton_raphson(p4_func_one, p4_dfunc_one, -4)
+# print(f"First root of f(x)_1 : {root2_nr_f1:.4f}")  # Approximated root: -2.2738
+# root1_nr_f2, iterf2 = newton_raphson(p4_funct_two, p4_dfunct_two, 2)
+# print(f"Root of f(x)_2 : {root1_nr_f2:.4f}") # Approximated root: 0.3795
+
+# print(p4_func_one(4.1704))
+# print(p4_func_one(-2.2738))
+# print(p4_funct_two(0.3795))
 
 
 
@@ -276,12 +345,12 @@ def golden_section(f, xl, xu, es=1):
 
     return xopt, f(xopt), iter_counter
 
-x_max, f_max, iters = golden_section(p6_scal, -2, 4, 1)
+# x_max, f_max, iters = golden_section(p6_scal, -2, 4, 1)
 
-print("Golden Section Result:")
-print("x_max =", x_max)
-print("f(x_max) =", f_max)
-print("iterations =", iters)
+# print("Golden Section Result:")
+# print("x_max =", x_max)
+# print("f(x_max) =", f_max)
+# print("iterations =", iters)
 
 
 def parabolic_max(f, x1, x2, x3, iterations=5):
@@ -301,8 +370,8 @@ def parabolic_max(f, x1, x2, x3, iterations=5):
     
     return xr, f(xr)
 
-x_max_p, f_max_p = parabolic_max(p6_scal, 1.7, 2, 2.7, 5)
+# x_max_p, f_max_p = parabolic_max(p6_scal, 1.7, 2, 2.7, 5)
 
-print("\nParabolic Interpolation Result:")
-print("x_max =", x_max_p)
-print("f(x_max) =", f_max_p)
+# print("\nParabolic Interpolation Result:")
+# print("x_max =", x_max_p)
+# print("f(x_max) =", f_max_p)
