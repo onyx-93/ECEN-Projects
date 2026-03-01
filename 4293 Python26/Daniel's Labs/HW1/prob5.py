@@ -190,3 +190,7 @@ if __name__ == "__main__":
     #plt.title('Plot of f(x) to visually estimate the root')
     #plt.grid()
     #plt.show()
+    
+    
+    
+    

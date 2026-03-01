@@ -6,8 +6,6 @@ def f(x):
     """f(x) = -0.3x⁴ + 1.8x³ - 1.2x² + 2x"""
     return -0.3 * x**4 + 1.8 * x**3 - 1.2 * x**2 + 2 * x
 
-
-# direct maximization version
 def golden_section_search(xl, xu, epsilon_s):
 
     # Golden ratio constants
@@ -17,15 +15,15 @@ def golden_section_search(xl, xu, epsilon_s):
     #iterates = []     # Storage for points evaluated
     #i = 0
     while xu - xl >= epsilon_s:  
-        d = r * (xu - xl)                 # Initial distance from boundaries
-        x1 = xu - d
-        x2 = xl + d
+        d = r * (xu - xl)         # Initial distance from boundaries
+        x1 = xl + d
+        x2 = xu - d
         f1 = f(x1)
         f2 = f(x2)
        # iterates.extend([x1, x2]) # Store points
         
         # Decide which subinterval to keep
-        if f1 > f2:
+        if f1 < f2:
             # Maximum is in left part → discard right of x1
             xu = x2
             x2 = x1
@@ -44,46 +42,48 @@ def golden_section_search(xl, xu, epsilon_s):
     return x_max#, f(x_max)#, iterates
 
 
-def parabolic_interpol(x1, x2, x3, n_iter=5):
+def parabolic_interpol(x1, x2, x3):
     """
-    
     Uses x1 < x2 < x3 naming exactly as in your original function.
     Performs n_iter iterations and returns the final best estimate (x2).
     """
-    for i in range(n_iter):
+    for i in range(5):
         f1 = f(x1)
         f2 = f(x2)
         f3 = f(x3)
+        
+        print( "\nx1 =", x1, "x2 =", x2, "x3 =", x3)
 
-        # Parabolic interpolation formula for the vertex (your original version)
+        # Parabolic interpolation formula for the vertex
         num = (x2 - x1)**2 * (f2 - f3) - (x2 - x3)**2 * (f2 - f1)
         den = (x2 - x1) * (f2 - f3) - (x2 - x3) * (f2 - f1)
-
-        if abs(den) < 1e-12:
-            break
             
-        x4 = x2 - 0.5 * (num / den)    # new candidate point
-
-        # Safeguard: if x4 lands outside the current bracket, take midpoint
-        if x4 <= x1 or x4 >= x3:
-            x4 = (x1 + x3) / 2
-
+        x4 = x2 - (0.5 * (num / den))    # new candidate point
         f4 = f(x4)
-
-        # Decide how to shrink the interval (improved logic that preserves ordering)
-        if x4 < x2:
-            if f4 > f2:      # better → discard right side
-                x3 = x2
-                x2 = x4
-            else:            # worse → discard left of new point
-                x1 = x4
-        else:
-            if f4 > f2:      # better → discard left side
+        
+        # remove left side
+        if x2 < x4 < x3:
+            # yes
+            if f4 < f2:
+                #yes
                 x1 = x2
                 x2 = x4
-            else:            # worse → discard right of new point
+            # no
+            else:
                 x3 = x4
-        #print(f"parabolic iteration {i+1}: x1 = {x1:.4f}, x2 = {x2:.4f}, x3 = {x3:.4f}, x4 = {x4:.4f}, f(x2) = {f(x2):.4f}")
+                
+        # remove right side
+        elif x1 < x4 < x2:
+            # yes
+            if f4 < f2:
+                #yes
+                x3 = x2
+                x2 = x4
+            # no
+            else:
+                x1 = x4
+                
+        print(f"parabolic iteration {i+1}: x1 = {x1:.4f}, x2 = {x2:.4f}, x3 = {x3:.4f}, x4 = {x4:.4f}, \nf1 = {f1:.4f}, f2 = {f2:.4f}, f3 = {f3:.4f}, f4 = {f4:.4f}")
 
     return x2
 
@@ -97,11 +97,10 @@ if __name__ == "__main__":
     x_max = golden_section_search(xl, xu, epsilon_s)
     
     print(f"\nGolden section estimate of maximum at x = {x_max:.2f}")
-    #print(f"Number of function evaluations ≈ {len(set(iterates))}")
     
     # parameter for parabolic interpolation
     x1 = 1.7
-    x2 = 2.0
+    x2 = 2
     x3 = 2.7
     x_max_parabolic = parabolic_interpol(x1, x2, x3)
     print(f"Parabolic interpolation estimate of maximum at x = {x_max_parabolic:.2f}")

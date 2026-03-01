@@ -1,9 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-# ──────────────────────────────────────────────
-# Core function — same as yours, but now supports history collection
-# ──────────────────────────────────────────────
+
 def f(x):
     return np.cos(x) - x
 
@@ -55,7 +53,7 @@ if __name__ == "__main__":
     xu_start = 1.0
     TOL = 1e-4
     
-    true_root = 0.7390   # Known root of cos(θ) = θ, rounded to 4 decimal places for error calculation
+    true_root = 0.7390  # Known root  rounded to 4 decimal places 
 
     # ─── Bisection ────────────────────────────────────────────────
     bis_history = []

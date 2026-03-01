@@ -1,9 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-# ──────────────────────────────────────────────
-# Function definitions
-# ──────────────────────────────────────────────
+
 def f(x):
     """Original function f(x) = sin(√x) - x"""
     return np.sin(np.sqrt(x)) - x
@@ -39,9 +37,7 @@ def fixed_point_iteration(x0, TOL):
     
     return x_new, iterates
 
-# ──────────────────────────────────────────────
-# Main execution + plotting
-# ──────────────────────────────────────────────
+
 if __name__ == "__main__":
     x0 = 0.5
     TOL = 1e-4
@@ -52,7 +48,7 @@ if __name__ == "__main__":
     
     # ─── Errors ────────────────────────────────────────────────
     true_root = 0.0
-    true_errors = np.abs(iterates)   # |x_i - 0|
+    true_errors = np.abs(iterates)   
 
     # Approximate relative error = consecutive diff / current value
     rel_errors = []
