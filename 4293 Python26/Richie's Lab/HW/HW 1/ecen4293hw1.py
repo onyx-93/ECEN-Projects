@@ -91,11 +91,10 @@ def p5_scalar_df(x):
 def p6_scal(x):
     return -0.3*x**4 + 1.8*x**3 - 1.2*x**2 + 2*x
 
-# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# ========================================================================================
 
+# ----------------------------------------------------------------------------------------
 
-
-# ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # ========================================================================================
 #                                   --- Problem 1 ---
 # ========================================================================================
@@ -106,8 +105,8 @@ def bisection(f, a, b, tol=1e-9, max_it=100):
     fa, fb = f(a), f(b) # Inititalize function variables
     roots_list = []
 
-    if fa * fb >= 0: # Sign check feature
-        raise ValueError("f(a) and f(b) must have different signs.")
+    # if fa * fb >= 0: # Sign check feature
+    #     raise ValueError("f(a) and f(b) must have different signs.")
     
     for i in range(max_it): # Iteration through the max amount of attempts
         c = 0.5 * (a + b) # Obtain midpoint
@@ -125,7 +124,7 @@ def bisection(f, a, b, tol=1e-9, max_it=100):
 
     return 0.5 * (a + b), i, roots_list # If tolerance not reached, return closest value
 
-# Obtain/assign x and y plotting points
+# --- Obtain/assign x and y plotting points ---
 
 # values_xrange = np.linspace(-50, 50, 100)
 
@@ -141,9 +140,9 @@ def bisection(f, a, b, tol=1e-9, max_it=100):
 
 # plt.show()
 
-# Obtain the bisection approximation once the limit brackets were set to: -0.5 and 0.5
+# --- Obtain the bisection approximation once the limit brackets were set to: -0.5 and 0.5 ---
 
-# root = bisection(f_scalar_p1, -345e6, -0.1)
+# root, iter_bisection, roots_list_bisection = bisection(f_scalar_p1, -1, 1, 1e-8)
 # print(f"\n\tThe value obtiained from the bisection method was: {root}")
 
 # ========================================================================================
@@ -195,8 +194,8 @@ def reg_falsi(f, a, b, tol=1e-9, max_it=100):
 
     return c, i, roots_list
 
-# p2_output, iter_reg_falsi_p2, ls_reg_falsi = reg_falsi(f_scalar_p2, -1, 1)
-# print(f"The total number of iterations for regula falsi on the range [-1, 1] is: {iter_reg_falsi_p2}")
+# p2_output, iter_reg_falsi_p2, ls_reg_falsi = reg_falsi(f_scalar_p2, -1, 1, 1e-8)
+# print(f"\n\tThe total number of iterations for regula falsi on the range [-1, 1] is: {iter_reg_falsi_p2}\n")
 
 # x_true = 0.739085
 
@@ -238,7 +237,7 @@ def fixed_point(f, guess, tol=1e-9, max_it=100):
 
 # root, list_high_tolerance = fixed_point(p3_scal, 0.5, 1e-4)
 # root_ref, list_low_tolerance = fixed_point(p3_scal, 0.5, 1e-10)
-# print(f"Solution with high tolerance:{root:.4f} | low tolerance: {root_ref:.4f}")
+# print(f"\nSolution with high tolerance:{root:.7f} | \n\tlow tolerance: {root_ref:.7f}\n")
 
 # true_error = [abs(root_ref - x) for x in list_low_tolerance]
 # relative_error = [abs(root_ref - x)/abs(root_ref) for x in list_low_tolerance]
@@ -294,20 +293,19 @@ def newton_raphson(f, df, x0, tol=1e-8, max_it=100):
 # plt.legend()
 # plt.show()
 
-# Roots for f(x)_1: x1 = -2.273, x2 = 4.17
-# Root for f(x)_2: x1 = 0.381
+# -- Roots for f(x)_1: x1 = -2.273, x2 = 4.17 -- (Graphical approximation)
+# -- Root for f(x)_2: x1 = 0.381 -- (Graphical approximation)
 
-# root1_nr_f1, iterf1 = newton_raphson(p4_func_one, p4_dfunc_one, 5)
-# print(f"First root of f(x)_1 : {root1_nr_f1:.4f}")  # Approximated root: 4.1704
-# root2_nr_f1, iterf1_r2 = newton_raphson(p4_func_one, p4_dfunc_one, -4)
-# print(f"First root of f(x)_1 : {root2_nr_f1:.4f}")  # Approximated root: -2.2738
-# root1_nr_f2, iterf2 = newton_raphson(p4_funct_two, p4_dfunct_two, 2)
-# print(f"Root of f(x)_2 : {root1_nr_f2:.4f}") # Approximated root: 0.3795
+# root1_nr_f1, iterf1_nraph, roots_nraph_f1_p1 = newton_raphson(p4_func_one, p4_dfunc_one, 5)
+# print(f"\nFirst root of f(x)_1 : {root1_nr_f1:.4f}")  # Approximated root: 4.1704
+# root2_nr_f1, iterf1_r2, roots_raph_f1_p2 = newton_raphson(p4_func_one, p4_dfunc_one, -4)
+# print(f"Second root of f(x)_1 : {root2_nr_f1:.4f}")  # Approximated root: -2.2738
+# root1_nr_f2, iterf2, roots_nraph_f2 = newton_raphson(p4_funct_two, p4_dfunct_two, 2)
+# print(f"Root of f(x)_2 : {root1_nr_f2:.4f}\n") # Approximated root: 0.3795
 
-# print(p4_func_one(4.1704))
-# print(p4_func_one(-2.2738))
-# print(p4_funct_two(0.3795))
-
+# print(f"\n\tSolution with first root 1 f(x)_1: {p4_func_one(4.1704)}")
+# print(f"\tSolution with second root f(x)_1: {p4_func_one(-2.2738)}")
+# print(f"\tSolution with unique root f(x)_2: {p4_funct_two(0.3795)}\n")
 
 
 
@@ -393,13 +391,12 @@ def golden_section(f, xl, xu, es=1):
 
     return xopt, f(xopt), iter_counter
 
-# x_max, f_max, iters = golden_section(p6_scal, -2, 4, 1)
+x_max, f_max, iters = golden_section(p6_scal, -2, 4, 1)
 
-# print("Golden Section Result:")
+# print("\nGolden Section Result:")
 # print("x_max =", x_max)
 # print("f(x_max) =", f_max)
-# print("iterations =", iters)
-
+# print(f"iterations = {iters}\n")
 
 def parabolic_max(f, x1, x2, x3, iterations=5):
     
@@ -422,4 +419,4 @@ def parabolic_max(f, x1, x2, x3, iterations=5):
 
 # print("\nParabolic Interpolation Result:")
 # print("x_max =", x_max_p)
-# print("f(x_max) =", f_max_p)
+# print(f"f(x_max) = {f_max_p}\n")
