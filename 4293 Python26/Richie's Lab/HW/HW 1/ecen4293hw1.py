@@ -2,6 +2,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 
+# Code done by: Ricardo Landeros Aranda
+# ECEN 4293 - Python with Numerical Methods
+# Spring 2026 | Oklahoma State University
+
+# This code was completed and checked with the use of generative AI. Mostly to understand
+# concepts, and how to apply them.
+# Link to the chat: https://chatgpt.com/share/69a3c0b2-1de8-8013-abd1-d7806ed3c7e3
+
 # ========================================================================================
 #                               --- Function Definition ---
 # ========================================================================================
@@ -73,6 +81,9 @@ def p5_vect(x):
 def p5_scalar(x):
     return -x**3 + 3*math.sin(x) + math.cos(x) + 9
 
+def p5_scalar_df(x):
+    return -3*x**2 + 3*math.cos(x) - math.sin(x) 
+
 # ================================== Problem 6 Functions =================================
 
 # Only need scalar version of function
@@ -94,27 +105,25 @@ def bisection(f, a, b, tol=1e-9, max_it=100):
 
     fa, fb = f(a), f(b) # Inititalize function variables
     roots_list = []
-    iteration_counter = 0
 
     if fa * fb >= 0: # Sign check feature
         raise ValueError("f(a) and f(b) must have different signs.")
     
-    for _ in range(max_it): # Iteration through the max amount of attempts
+    for i in range(max_it): # Iteration through the max amount of attempts
         c = 0.5 * (a + b) # Obtain midpoint
         fc = f(c) # Obtain func value at midpoint
     
         if abs(fc) < tol or 0.5 * (b - a) < tol: # Tolerance satisfaction check
-            return c, iteration_counter, roots_list
+            return c, i, roots_list
     
         if fa * fc < 0: # Limit check and assignment
             b, fb = c, fc
         else:
             a, fa = c, fc
         
-        iteration_counter += 1
         roots_list.append(c)
 
-    return 0.5 * (a + b), iteration_counter, roots_list # If tolerance not reached, return closest value
+    return 0.5 * (a + b), i, roots_list # If tolerance not reached, return closest value
 
 # Obtain/assign x and y plotting points
 
@@ -144,7 +153,7 @@ def bisection(f, a, b, tol=1e-9, max_it=100):
 
 # ========================== --- Function iteraction check --- ============================
 
-default_output_p2, iterations_p2, ls_bisection = bisection(f_scalar_p2, -1, 1, 10e-4)
+# default_output_p2, iterations_p2, ls_bisection = bisection(f_scalar_p2, -1, 1, 10e-4)
 # print(f"\n\tThe number of iterations for cos(theta) - theta is: {iterations_p2}\n")
 
 # -- Result was 10 --
@@ -164,17 +173,16 @@ def reg_falsi(f, a, b, tol=1e-9, max_it=100):
     
     fa, fb = f(a), f(b)
     roots_list = []
-    iteration_counter = 0
 
     if fa * fb >= 0:
         raise ValueError("Limit points f(a) and f(b) should be of opposite sign.")
     
-    for _ in range(max_it):
+    for i in range(max_it):
         c = ((a*fb - b*fa)/(fb - fa))
         fc = f(c)
 
         if (abs(fc) < tol):
-            return c, iteration_counter, roots_list
+            return c, i, roots_list
     
         # Reassign c
         if fa * fc < 0:
@@ -183,10 +191,9 @@ def reg_falsi(f, a, b, tol=1e-9, max_it=100):
             a, fa = c, fc
         # Update limits
 
-        iteration_counter += 1
         roots_list.append(c)
 
-    return c, iteration_counter, roots_list
+    return c, i, roots_list
 
 # p2_output, iter_reg_falsi_p2, ls_reg_falsi = reg_falsi(f_scalar_p2, -1, 1)
 # print(f"The total number of iterations for regula falsi on the range [-1, 1] is: {iter_reg_falsi_p2}")
@@ -253,6 +260,7 @@ def fixed_point(f, guess, tol=1e-9, max_it=100):
 # ========================================================================================
 
 def newton_raphson(f, df, x0, tol=1e-8, max_it=100):
+    memory =[x0]
     x = x0
 
     for i in range(max_it):
@@ -263,11 +271,13 @@ def newton_raphson(f, df, x0, tol=1e-8, max_it=100):
             raise ValueError("Derivative too small -- risk of division by zero.")
         
         x_next = x - fx/dfx
+        memory.append(x_next)
 
         if abs(x_next - x) < tol:
-            return x_next, i
+            return x_next, i, memory
         
         x = x_next
+
 
     raise ValueError("\n\tFunction did not converge\n")
 
@@ -305,8 +315,46 @@ def newton_raphson(f, df, x0, tol=1e-8, max_it=100):
 #                                   --- Problem 5 ---
 # ========================================================================================
 
+def secant_method(f, a, b, tol=1e-9, max_it=100):
+    memory = []
+    x1, x2 = a, b
+    
 
+    for i in range(max_it):
+        fx1, fx2 = f(x1), f(x2)
 
+        if abs(fx2 - fx1) < 1e-14:
+            raise ValueError("Denominator too small -- risk to divide by zero.")
+        
+        # Secant update
+        x3 = x2 - fx2 * (x2 - x1)/(fx2 - fx1)
+        memory.append(x3)
+        # Convergence check
+        if abs(x3 - x2) < tol:
+            return x3, i, memory
+        
+        x1, x2 = x2, x3
+
+    raise ValueError("Function did not converge.")
+
+# root_bisection, iteration_bisection, bisection_roots = bisection(p5_scalar, 0, 4, 1e-4)
+
+# root_reg_fal, iteration_reg_fal, reg_fal_roots = reg_falsi(p5_scalar, 0, 4, 1e-4)
+
+# root_new_raph, counter_new_raph, new_raphson_roots = newton_raphson(p5_scalar, p5_scalar_df, 3, 1e-4)
+
+# root_sec_met, counter_sec_met, roots_sec_met = secant_method(p5_scalar, 0, 4, 1e-4)
+
+# plt.plot(bisection_roots, label="Bisection")
+# plt.plot(reg_fal_roots, label="Regula Falsi")
+# plt.plot(new_raphson_roots, label="Newton-Raphson")
+# plt.plot(roots_sec_met, label="Secant")
+
+# plt.xlabel("Iterations")
+# plt.ylabel("Approximation of Theta")
+# plt.legend()
+# plt.grid(True)
+# plt.show()
 
 
 
