@@ -81,34 +81,23 @@ def Newton_Raphson(x0, func, TOL):
     return x_new, iterates # Return final root and list of iterates
     
 def secant(x0, x1, func, TOL):
+    iterates = [x0, x1]
+    xa, xb = x0, x1                # previous, current
+    fa, fb = func(xa), func(xb)
 
-    function_i = func(x0) # initial function value at x0
-    function_j = func(x1) # initial function value at x1
-    iterates = [x0] # store all x values  
-    
-    # First iteration outside the loop to have valid diff
-    x_new = x0 - ((function_i * (x0 - x1)) / (function_i - function_j)) # initial guess for Secant method
-    diff = abs(x_new - x0)
-    
-    #i = 0
-    #print(f"x{i+1} = {x_new:.4f}") # Print initial iterate
-    
-    #iterates.append(x_new)
-    
-    while diff >= TOL:
-        x0 = x_new
-        x1 = x0 - 1 # Update xj to be the previous xi
-        function_i = func(x0)
-        function_j = func(x1)
-        x_new = x0 - ((function_i * (x0 - x1)) / (function_i - function_j)) # Secant method update
-        diff = abs(x_new - x0)
-        iterates.append(x0)
+    while True:
+        denom = fb - fa
+        if abs(denom) < 1e-12:
+            raise ValueError("secant denominator near zero")
         
-        #i += 1
-        #print(f"x{i+1} = {x_new:.4f}") # Print each iterate
+        xc = xb - fb * (xb - xa) / denom
+        iterates.append(xc)
         
-    
-    return x_new, iterates # Return final root and list of iterates
+        if abs(xc - xb) < TOL:
+            return xc, iterates
+        
+        xa, fa = xb, fb
+        xb, fb = xc, func(xc)
 
 
 if __name__ == "__main__":
