@@ -10,31 +10,49 @@ def bisection_gen(xl, xu, TOL, func):
     """MODIFICATION: Generator version. Yields each xm. Accepts func for generality."""
     if func(xl) * func(xu) >= 0:
         raise ValueError("Error: No sign change — bad bracket")
+    
     i = 0
-    while abs(xu - xl) >= TOL and i < 500:
+    while True:
+        i += 1
+        if i > 500:
+            raise ValueError("Bisection method did not converge")
+        
         xm = (xl + xu) / 2
+        
+        if abs(xu - xl) < TOL:
+            yield xm
+            break
+        
         yield xm
+
         if func(xm) * func(xl) < 0:
             xu = xm
         else:
             xl = xm
-        i += 1
-    yield xm   # final refined value
-
+    
 def regula_falsi_gen(xl, xu, TOL, func):
     """MODIFICATION: Generator version. Yields each xr."""
     if func(xl) * func(xu) >= 0:
         raise ValueError("Error: No sign change — bad bracket")
     
-    yield xl, xu
+    i = 0
+    while True:
+        i += 1
+        if i > 500:
+            raise ValueError("Regula Falsi method did not converge")
     
-    while abs(xu - xl) >= TOL:
         denominator = (func(xl) - func(xu))
         
-        if abs(denominator) < 1e-12:
-            raise ValueError("Error: denominator zero — cannot proceed")
+        if abs(denominator) < 1e-14:
+            yield xu
+            break
         
         xr = (xu * func(xl) - xl * func(xu)) / denominator
+        
+        if abs(xu - xl) < TOL:
+            yield xr
+            break
+        
         yield xr
         
         if func(xr) * func(xl) < 0:
@@ -42,21 +60,19 @@ def regula_falsi_gen(xl, xu, TOL, func):
         else:
             xu = xr
 
-    yield xr
 
 
-def fixed_point_gen(x0, TOL, g_func):
+def fixed_point_gen(x0, TOL, g):
     """MODIFICATION: Generator for fixed-point. Uses g_func (you pass your g)."""
     xi = x0
     yield xi 
-    i = 0
-        
+    i = 0    
     while True:
         i += 1
         if i > 500:
             raise ValueError("Fixed point did not converge")
         
-        x_new = g_func(xi)
+        x_new = g(xi)
         yield x_new
         diff = abs(x_new - xi)
         
@@ -69,8 +85,12 @@ def fixed_point_gen(x0, TOL, g_func):
 def newton_raphson_gen(x0, TOL, func):
     x = x0
     yield x                     # starting point
-    
+    i = 0
     while True:
+        i += 1
+        if i > 500:
+            raise ValueError("Newton-Raphson method did not converge")
+        
         fx = func(x)
         dfx = d_fx(func, x)
         
@@ -82,16 +102,20 @@ def newton_raphson_gen(x0, TOL, func):
         
         if abs(x_new - x) < TOL:
             break
+        
         x = x_new
     
 
 def secant_gen(x0, x1, TOL, func):
     xa, xb = x0, x1               # xa = older, xb = newer
     fa, fb = func(xa), func(xb)
-    
     yield xb                      # first meaningful point
-    
+    i = 0
     while True:
+        i += 1
+        if i > 500:
+            raise ValueError("Secant method did not converge")
+        
         denom = fb - fa
         if abs(denom) < 1e-12:
             raise ValueError("secant denominator near zero")
@@ -111,14 +135,19 @@ def golden_section_search_gen(xl, xu, epsilon_s, func):
     """MODIFICATION: Generator version. Yields current midpoint estimate each iteration."""
     phi = (1 + np.sqrt(5)) / 2
     r = 1 / phi
-    while xu - xl >= epsilon_s:
+    i = 0
+    while True:
+        i += 1
+        if i > 500:
+            raise ValueError("Golden Section Search method did not converge")
+        
         d = r * (xu - xl)
         x1 = xl + d
         x2 = xu - d
         f1 = func(x1)
         f2 = func(x2)
 
-        if f1 < f2:          
+        if f1 <= f2:          
             xu = x2
             x2 = x1
             x1 = xu
@@ -128,32 +157,63 @@ def golden_section_search_gen(xl, xu, epsilon_s, func):
             x2 = xl
         
         x_max = (xl + xu) / 2
+        
+        if  xu - xl < epsilon_s:
+            yield x_max
+            break
+        
         yield x_max
-    
 
 
 def parabolic_interpol_gen(x1, x2, x3, func):
-    """MODIFICATION: Generator version (fixed 5 iterations as in your original)."""
-    for i in range(5):
+    """
+    Stable generator version of parabolic interpolation for maximization.
+    Keeps bracket and avoids denominator collapse.
+    """
+
+    i = 0
+    while True:
+        i += 1
+        if i > 500:
+            raise ValueError("Parabolic interpolation did not converge")
+
+        # Ensure ordering
+        xs = sorted([x1, x2, x3])
+        x1, x2, x3 = xs[0], xs[1], xs[2]
+
         f1 = func(x1)
         f2 = func(x2)
         f3 = func(x3)
+
+        # Parabolic interpolation formula
         num = (x2 - x1)**2 * (f2 - f3) - (x2 - x3)**2 * (f2 - f1)
         den = (x2 - x1) * (f2 - f3) - (x2 - x3) * (f2 - f1)
-        
-        if abs(den) < 1e-12:
-            yield x2
-        
-        x4 = x2 - (0.5 * (num / den))
-        yield x4
-        f4 = func(x4)
-        
-        if f1 == max([f1, f2, f3, f4]) or f2 == max([f1, f2, f3, f4]):
-            x3 = x2
-        else:
-            x1 = x2
-            x2 = x3
-            x3 = x4
-    
-    
 
+        # Near convergence safeguard
+        if abs(den) < 1e-14:
+            yield x2
+            break
+
+        x4 = x2 - 0.5 * (num / den)
+        yield x4
+
+        f4 = func(x4)
+
+        # ---- Maintain bracket around maximum ----
+        if x4 > x2:
+            if f4 > f2:
+                x1 = x2
+                x2 = x4
+            else:
+                x3 = x4
+        else:
+            if f4 > f2:
+                x3 = x2
+                x2 = x4
+            else:
+                x1 = x4
+
+        # Optional stopping condition
+        if abs(x3 - x1) < 1e-10:
+            yield x2
+            break

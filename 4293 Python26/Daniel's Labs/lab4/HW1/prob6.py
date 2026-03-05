@@ -91,7 +91,7 @@ if __name__ == "__main__":
     # parameter for parabolic interpolation
     x1 = -1
     x2 = 2
-    x3 = 2.7
+    x3 = 5
     x_max_parabolic = parabolic_interpol(x1, x2, x3)
     
     print(f"Parabolic interpolation estimate of maximum at x = {x_max_parabolic:.2f}")

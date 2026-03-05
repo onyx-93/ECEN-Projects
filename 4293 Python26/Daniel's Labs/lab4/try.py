@@ -34,4 +34,3 @@ def error_analysis(num_method, x_true, *args, **kwargs):
 
 
 
-#########################

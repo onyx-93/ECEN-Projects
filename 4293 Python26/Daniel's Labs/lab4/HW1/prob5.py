@@ -126,7 +126,7 @@ if __name__ == "__main__":
     
     # Run Secant (already returns iterates)
     root_sec, iter_sec = secant(x0, x1, f, TOL)
-    print(f"Secant root: {root_sec:.5f}")
+    print(f"Secant root: {root_sec:.10f}")
     
     # ──────────────────────────────────────────────
     # Plot: approximation value vs iteration for each method

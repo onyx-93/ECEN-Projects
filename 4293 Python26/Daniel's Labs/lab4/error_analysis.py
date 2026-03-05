@@ -2,120 +2,165 @@ import numpy as np
 import matplotlib.pyplot as plt
 from numerical_methods import bisection_gen, regula_falsi_gen, newton_raphson_gen, fixed_point_gen, secant_gen, golden_section_search_gen, parabolic_interpol_gen
 
-# ================================================
-# FULL error_analysis.py (replace your stub)
-# ================================================
-# WHAT THIS DOES (exactly as the assignment requires):
-# 1. Takes x_true, func=f(x), numerical_method=your *_gen function, *method_args (all args the generator needs, including TOL/epsilon_s and func/g_func).
-# 2. Runs the generator, collects every xi it yields.
-# 3. If it diverges (too many iterations or huge numbers) → raises clear error.
-# 4. If plot_error=True → shows absolute error vs iteration on log-linear (semilogy) axes.
-# 5. If plot_convergence=True → shows the (x_{i-1}, x_i) line plot with y=x reference line.
-# 6. Returns order of convergence p estimated by linear regression (np.polyfit) on log|e_i| vs log|e_{i-1}|. 
-#    This gives ~2 for Newton-Raphson, ~1 for bisection/secant/fixed-point, etc. — exactly what the assignment wants to test.
-
-
 def error_analysis(x_true, func, numerical_method, *method_args,
-                   plot_error=False, plot_convergence=False, max_iter=500):
+                   plot_error=True, plot_convergence=True):
     """
-    Error analysis function per assignment guidelines.
-    *method_args contains everything your generator needs (e.g. xl, xu, TOL, func).
+    Generic error analysis tool for iterative numerical methods.
+
+    Parameters
+    ----------
+    x_true : float
+        Known exact solution.
+    func : callable
+        The function f(x).
+    numerical_method : generator function
+        Your iterative generator.
+    *method_args :
+        Arguments required by the numerical method.
+    plot_error : bool
+        If True → plots absolute error vs iteration (log scale).
+    plot_convergence : bool
+        If True → plots (x_{i-1}, x_i) convergence map.
+
+    Returns
+    -------
+    order_est : float
+        Estimated order of convergence.
     """
+
     iterates = []
-    
+    errors = []
+
+    # Run generator
     try:
-        # Run the generator (this is the "callable generator function" part)
-        for xi in numerical_method(*method_args):
-            iterates.append(xi)
-            
-            if len(iterates) > max_iter:
-                raise RuntimeError(f"Method did not converge after {max_iter} iterations — likely diverging.")
-            if np.isnan(xi) or abs(xi) > 1e12:
-                raise RuntimeError("Method diverging: values exploding.")
-            
+        # If fixed point method → do NOT pass func
+        if numerical_method.__name__ == "fixed_point_gen":
+            generator = numerical_method(*method_args)
+        else:
+            generator = numerical_method(*method_args, func)
+
+        for x in generator:
+            iterates.append(x)
+            errors.append(abs(x - x_true))
+
+            # Divergence detection
+            if len(errors) > 5:
+                if errors[-1] > errors[-2] > errors[-3]:
+                    raise ValueError("Method appears to be diverging.")
+                    #return None
+
     except Exception as e:
-        # Re-raise errors coming from the method itself (bad bracket, zero derivative, etc.)
-        raise RuntimeError(f"Method failed: {e}") from e
-    
-    if len(iterates) < 2:
-        raise ValueError("Not enough iterates produced.")
-    
-    # Final check against known true solution
-    final_err = abs(iterates[-1] - x_true)
-    if final_err > 1e-3:   # you can tighten this for your problems
-        raise ValueError(f"Method did not reach the true solution (final error = {final_err:.2e}).")
-    
-    errors = np.abs(np.array(iterates) - x_true)
-    
-    # Plot 1: Absolute error on log-linear axes
+        print("Generator stopped:", e)
+        plot_convergence = False
+        plot_error = False
+        return None
+
+    iterates = np.array(iterates)
+    errors = np.array(errors)
+
+    # Remove zero errors (avoid log problems)
+    mask = errors > 1e-14
+    errors = errors[mask]
+
+    if len(errors) < 3:
+        print("Not enough data points to estimate convergence order.")
+        return None
+
+    # -----------------------------
+    # Plot 1: Absolute Error
+    # -----------------------------
     if plot_error:
-        plt.figure(figsize=(9, 5))
-        iters = np.arange(1, len(errors) + 1)
-        plt.semilogy(iters, errors, 'b-o', linewidth=2, markersize=5)
-        plt.xlabel('Iteration')
-        plt.ylabel('|x_i - x_true| (log scale)')
-        plt.title('Error Decay (log-linear)')
-        plt.grid(True, which='both')
-        plt.show()
-    
-    # Plot 2: Convergence plot (x_{i-1}, x_i)
-    if plot_convergence:
-        x_prev = np.array(iterates[:-1])
-        x_curr = np.array(iterates[1:])
-        plt.figure(figsize=(9, 5))
-        plt.plot(x_prev, x_curr, 'g-o', label='Method path')
-        # y = x reference line
-        minv = min(x_prev.min(), x_curr.min())
-        maxv = max(x_prev.max(), x_curr.max())
-        plt.plot([minv, maxv], [minv, maxv], 'r--', label='y = x')
-        plt.xlabel('$x_{i-1}$')
-        plt.ylabel('$x_i$')
-        plt.title('Convergence Plot')
-        plt.legend()
+        plt.figure()
+        plt.semilogy(errors, marker='o')
+        plt.xlabel("Iteration")
+        plt.ylabel("Absolute Error")
+        plt.title("Error vs Iteration (Log-Linear)")
         plt.grid(True)
         plt.show()
-    
-    # Order of convergence via linear regression on log-log errors
-    order_est = None
-    if len(errors) >= 4:
-        log_e_prev = np.log(errors[:-1][2:])   # skip first few transient points
-        log_e_curr = np.log(errors[1:][2:])
-        slope, _ = np.polyfit(log_e_prev, log_e_curr, 1)
-        order_est = slope
-        print(f"Estimated order of convergence p ≈ {order_est:.3f}")
-    else:
-        print("Not enough iterates for order estimation.")
-    
+
+    # -----------------------------
+    # Plot 2: Convergence Map
+    # -----------------------------
+    if plot_convergence and len(iterates) > 1:
+        plt.figure()
+        plt.plot(iterates[:-1], iterates[1:], marker='o')
+        plt.xlabel("x_i")
+        plt.ylabel("x_{i+1}")
+        plt.title("Convergence Map")
+        plt.grid(True)
+        plt.show()
+
+    # -----------------------------
+    # Order of Convergence Estimate
+    # -----------------------------
+    # log(e_{n+1}) vs log(e_n)
+    log_e_n = np.log(errors[:-1])
+    log_e_np1 = np.log(errors[1:])
+
+    slope, intercept = np.polyfit(log_e_n, log_e_np1, 1)
+
+    order_est = slope
+
+    print(f"Estimated order of convergence: {order_est:.2f}")
+
     return order_est
 
+    # Test Function
+    # -----------------------------------
+def f(x):
+    return x**2 - 2
+
+    # Fixed point function
+def g(x):
+    return 0.5 * (x + 2/x)
+# -----------------------------------
+# Optimization Test Function
+# -----------------------------------
+def f_opt(x):
+    """f(x) = -0.3x⁴ + 1.8x³ - 1.2x² + 2x"""
+    return -0.3 * x**4 + 1.8 * x**3 - 1.2 * x**2 + 2 * x
 
 # Example test program (replace x_true with the known exact root/max for your problem)
 if __name__ == "__main__":
-   
-
-    # Example 1: Root-finding with known root (use your own f and known x_true)
-    def test_f(x):
-        return x**2 - 2          # known root = sqrt(2) ≈ 1.41421356237
     
     x_true = np.sqrt(2)
+    TOL = 1e-8
 
-    print("=== Newton-Raphson (should return ~2.0) ===")
-    order = error_analysis(x_true, test_f, newton_raphson_gen,
-                           1.0, 1e-10, test_f,          # args: x0, TOL, func
-                           plot_error=True, plot_convergence=True)
-    print("Newton order:", order)
+    print("\n==============================")
+    print("Bisection Method")
+    print("==============================")
+    error_analysis(x_true, f, bisection_gen, 1, 2, TOL)
 
-    print("\n=== Bisection ===")
-    order = error_analysis(x_true, test_f, bisection_gen,
-                           1.0, 2.0, 1e-10, test_f,     # xl, xu, TOL, func
-                           plot_error=True, plot_convergence=True)
+    print("\n==============================")
+    print("Regula Falsi Method")
+    print("==============================")
+    error_analysis(x_true, f, regula_falsi_gen, 1, 2, TOL)
 
-    # Example 2: Fixed-point (pass g_func)
-    def g(x):
-        return np.sin(np.sqrt(x))   # example
-    # x_true would be the fixed point of g
-    # order = error_analysis(x_true, None, fixed_point_gen, 0.5, 1e-10, g, ...)
+    print("\n==============================")
+    print("Newton-Raphson Method")
+    print("==============================")
+    error_analysis(x_true, f, newton_raphson_gen, 1, TOL)
 
-    # Example 3: Optimization (golden)
-    # x_true = known maximizer of your f
-    # order = error_analysis(x_true, f, golden_section_search_gen, -10, 10, 1e-6, f, ...)
+    print("\n==============================")
+    print("Fixed-Point Iteration")
+    print("==============================")
+    error_analysis(x_true, f, fixed_point_gen, 1, TOL, g)
+
+    print("\n==============================")
+    print("Secant Method")
+    print("==============================")
+    error_analysis(x_true, f, secant_gen, 1, 2, TOL)
+    
+    # Optimization Methods (Maxima of function)
+    maxima = 3
+    print("\n==============================")
+    print("Golden Section Search")
+    print("==============================")
+     # bracket around maximum
+    error_analysis(maxima, f_opt, golden_section_search_gen, -2, 4, TOL)
+    
+    print("\n==============================")
+    print("Parabolic Interpolation")
+    print("==============================")
+    # three points around max
+    error_analysis(maxima, f_opt, parabolic_interpol_gen, -1, 2, 5)
