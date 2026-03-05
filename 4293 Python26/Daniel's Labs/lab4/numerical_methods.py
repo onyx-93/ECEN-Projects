@@ -6,9 +6,6 @@ def d_fx(func, x, h=1e-8):
     """Approximate f'(x) using central finite difference"""
     return (func(x + h) - func(x - h)) / (2 * h)
 
-def d2_fx(func, x, h=1e-5):
-    return (func(x+h) - 2*func(x) + func(x-h)) / h**2
-
 def bisection_gen(xl, xu, TOL, func):
     """MODIFICATION: Generator version. Yields each xm. Accepts func for generality."""
     if func(xl) * func(xu) >= 0:
@@ -200,18 +197,7 @@ def parabolic_interpol_gen(x1, x2, x3, func):
 
         x4 = x2 - 0.5 * (num / den)
         yield x4
-
         f4 = func(x4)
-
-        #second derivative test to confirm maxima
-        #df = abs(d_fx(func, x4)) # first derivative
-        #sec_df = d2_fx(func, x4)  # second derivative
-        #print('first derivative:', df, 'second derivative:', sec_df)
-
-
-        #if df < 1e-7 and sec_df < 0:
-         #   print('x4 is maxima')
-          #  break
 
         # ---- Maintain bracket around maximum ----
         if f1 == max([f1, f2, f3, f4]) or f2 == max([f1, f2, f3, f4]):
@@ -222,8 +208,3 @@ def parabolic_interpol_gen(x1, x2, x3, func):
             x1 = x2
             x2 = x3
             x3 = x4
-
-        # Optional stopping condition
-        #if abs(x3 - x1) < 1e-10:
-         #   yield x2
-          #  break
