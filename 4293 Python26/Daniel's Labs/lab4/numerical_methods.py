@@ -177,10 +177,6 @@ def parabolic_interpol_gen(x1, x2, x3, func):
         if i > 500:
             raise ValueError("Parabolic interpolation did not converge")
 
-        # Ensure ordering
-       # xs = sorted([x1, x2, x3])
-        #x1, x2, x3 = xs[0], xs[1], xs[2]
-
         f1 = func(x1)
         f2 = func(x2)
         f3 = func(x3)
