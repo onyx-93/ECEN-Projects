@@ -163,4 +163,4 @@ if __name__ == "__main__":
     print("Parabolic Interpolation")
     print("==============================")
     # three points around max
-    error_analysis(maxima, f_opt, parabolic_interpol_gen, -1, 2, 5)
+    error_analysis(maxima, f_opt, parabolic_interpol_gen, 1.7, 2, 5)
