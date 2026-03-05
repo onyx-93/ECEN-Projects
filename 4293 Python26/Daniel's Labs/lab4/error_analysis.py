@@ -152,7 +152,7 @@ if __name__ == "__main__":
     error_analysis(x_true, f, secant_gen, 1, 2, TOL)
     
     # Optimization Methods (Maxima of function)
-    maxima = 3
+    maxima = 4.1122
     print("\n==============================")
     print("Golden Section Search")
     print("==============================")

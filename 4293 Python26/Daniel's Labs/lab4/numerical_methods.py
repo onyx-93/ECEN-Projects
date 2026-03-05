@@ -178,8 +178,8 @@ def parabolic_interpol_gen(x1, x2, x3, func):
             raise ValueError("Parabolic interpolation did not converge")
 
         # Ensure ordering
-        xs = sorted([x1, x2, x3])
-        x1, x2, x3 = xs[0], xs[1], xs[2]
+       # xs = sorted([x1, x2, x3])
+        #x1, x2, x3 = xs[0], xs[1], xs[2]
 
         f1 = func(x1)
         f2 = func(x2)
@@ -199,21 +199,25 @@ def parabolic_interpol_gen(x1, x2, x3, func):
 
         f4 = func(x4)
 
+        #second derivative test to confirm maxima
+        df = d_fx(func, x4) # first derivative
+        sec_df = d_fx(lambda x: d_fx(func, x), x4)  # second derivative
+
+        if abs(df) <= 1e-10 and sec_df < 0:
+            yield x4
+            break
+
         # ---- Maintain bracket around maximum ----
-        if x4 > x2:
-            if f4 > f2:
-                x1 = x2
-                x2 = x4
-            else:
-                x3 = x4
+        if f1 == max([f1, f2, f3, f4]) or f2 == max([f1, f2, f3, f4]):
+            # x1 or x2 produces the maximum f(x) → eliminate x4
+            x3 = x2                     # tighten the right side
         else:
-            if f4 > f2:
-                x3 = x2
-                x2 = x4
-            else:
-                x1 = x4
+            # otherwise eliminate x1 (shift the bracket rightward)
+            x1 = x2
+            x2 = x3
+            x3 = x4
 
         # Optional stopping condition
-        if abs(x3 - x1) < 1e-10:
-            yield x2
-            break
+        #if abs(x3 - x1) < 1e-10:
+         #   yield x2
+          #  break
