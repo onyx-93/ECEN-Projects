@@ -153,14 +153,15 @@ if __name__ == "__main__":
     
     # Optimization Methods (Maxima of function)
     maxima = 4.1122
+    TOL_opt = 1e-5
     print("\n==============================")
     print("Golden Section Search")
     print("==============================")
      # bracket around maximum
-    error_analysis(maxima, f_opt, golden_section_search_gen, -2, 4, TOL)
+    error_analysis(maxima, f_opt, golden_section_search_gen, -2, 4, TOL_opt)
     
     print("\n==============================")
     print("Parabolic Interpolation")
     print("==============================")
     # three points around max
-    error_analysis(maxima, f_opt, parabolic_interpol_gen, 1.7, 2, 5)
+    error_analysis(maxima, f_opt, parabolic_interpol_gen, 1.7, 2.0, 5.0, TOL_opt)

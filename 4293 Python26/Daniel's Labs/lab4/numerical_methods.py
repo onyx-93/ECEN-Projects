@@ -165,7 +165,7 @@ def golden_section_search_gen(xl, xu, epsilon_s, func):
         yield x_max
 
 
-def parabolic_interpol_gen(x1, x2, x3, func):
+def parabolic_interpol_gen(x1, x2, x3, TOL, func):
     """
     Stable generator version of parabolic interpolation for maximization.
     Keeps bracket and avoids denominator collapse.
@@ -192,8 +192,13 @@ def parabolic_interpol_gen(x1, x2, x3, func):
             break
 
         x4 = x2 - 0.5 * (num / den)
-        yield x4
         f4 = func(x4)
+
+        if abs(x4 - x2) < TOL or abs(x3 - x1) < TOL:
+            yield x4
+            break
+
+        yield x4
 
         # ---- Maintain bracket around maximum ----
         if f1 == max([f1, f2, f3, f4]) or f2 == max([f1, f2, f3, f4]):
@@ -204,3 +209,5 @@ def parabolic_interpol_gen(x1, x2, x3, func):
             x1 = x2
             x2 = x3
             x3 = x4
+        
+
