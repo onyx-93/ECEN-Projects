@@ -6,7 +6,7 @@ def d_fx(func, x, h=1e-8):
     """Approximate f'(x) using central finite difference"""
     return (func(x + h) - func(x - h)) / (2 * h)
 
-def bisection_gen(xl, xu, TOL, func):
+def Bisection(xl, xu, TOL, func):
     """MODIFICATION: Generator version. Yields each xm. Accepts func for generality."""
     if func(xl) * func(xu) >= 0:
         raise ValueError("Error: No sign change — bad bracket")
@@ -30,7 +30,7 @@ def bisection_gen(xl, xu, TOL, func):
         else:
             xl = xm
     
-def regula_falsi_gen(xl, xu, TOL, func):
+def Regula_Falsi(xl, xu, TOL, func):
     """MODIFICATION: Generator version. Yields each xr."""
     if func(xl) * func(xu) >= 0:
         raise ValueError("Error: No sign change — bad bracket")
@@ -62,7 +62,7 @@ def regula_falsi_gen(xl, xu, TOL, func):
 
 
 
-def fixed_point_gen(x0, TOL, g):
+def Fixed_Point(x0, TOL, g):
     """MODIFICATION: Generator for fixed-point. Uses g_func (you pass your g)."""
     xi = x0
     yield xi 
@@ -82,7 +82,7 @@ def fixed_point_gen(x0, TOL, g):
         xi = x_new
         
 
-def newton_raphson_gen(x0, TOL, func):
+def Newton_Raphson(x0, TOL, func):
     x = x0
     yield x                     # starting point
     i = 0
@@ -106,7 +106,7 @@ def newton_raphson_gen(x0, TOL, func):
         x = x_new
     
 
-def secant_gen(x0, x1, TOL, func):
+def Secant(x0, x1, TOL, func):
     xa, xb = x0, x1               # xa = older, xb = newer
     fa, fb = func(xa), func(xb)
     yield xb                      # first meaningful point
@@ -131,7 +131,7 @@ def secant_gen(x0, x1, TOL, func):
         xb, fb = xc, func(xc)
     
 
-def golden_section_search_gen(xl, xu, epsilon_s, func):
+def Golden_Section_Search(xl, xu, epsilon_s, func):
     """MODIFICATION: Generator version. Yields current midpoint estimate each iteration."""
     phi = (1 + np.sqrt(5)) / 2
     r = 1 / phi
@@ -165,7 +165,7 @@ def golden_section_search_gen(xl, xu, epsilon_s, func):
         yield x_max
 
 
-def parabolic_interpol_gen(x1, x2, x3, TOL, func):
+def Parabolic_Interpol(x1, x2, x3, TOL, func):
     """
     Stable generator version of parabolic interpolation for maximization.
     Keeps bracket and avoids denominator collapse.

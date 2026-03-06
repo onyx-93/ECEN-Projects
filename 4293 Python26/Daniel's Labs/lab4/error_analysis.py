@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from numerical_methods import bisection_gen, regula_falsi_gen, newton_raphson_gen, fixed_point_gen, secant_gen, golden_section_search_gen, parabolic_interpol_gen
+from matplotlib.lines import Line2D
+from numerical_methods import Bisection, Regula_Falsi, Newton_Raphson, Fixed_Point, Secant, Golden_Section_Search, Parabolic_Interpol
 
 def error_analysis(x_true, func, numerical_method, *method_args,
                    plot_error=True, plot_convergence=True):
@@ -34,7 +35,7 @@ def error_analysis(x_true, func, numerical_method, *method_args,
     # Run generator
     try:
         # If fixed point method → do NOT pass func
-        if numerical_method.__name__ == "fixed_point_gen":
+        if numerical_method.__name__ == "Fixed_Point":
             generator = numerical_method(*method_args)
         else:
             generator = numerical_method(*method_args, func)
@@ -66,33 +67,9 @@ def error_analysis(x_true, func, numerical_method, *method_args,
         print("Not enough data points to estimate convergence order.")
         return None
 
-    # -----------------------------
-    # Plot 1: Absolute Error
-    # -----------------------------
-    if plot_error:
-        plt.figure()
-        plt.semilogy(errors, marker='o')
-        plt.xlabel("Iteration")
-        plt.ylabel("Absolute Error")
-        plt.title("Error vs Iteration (Log-Linear)")
-        plt.grid(True)
-        plt.show()
 
-    # -----------------------------
-    # Plot 2: Convergence Map
-    # -----------------------------
-    if plot_convergence and len(iterates) > 1:
-        plt.figure()
-        plt.plot(iterates[:-1], iterates[1:], marker='o')
-        plt.xlabel("x_i")
-        plt.ylabel("x_{i+1}")
-        plt.title("Convergence Map")
-        plt.grid(True)
-        plt.show()
-
-    # -----------------------------
     # Order of Convergence Estimate
-    # -----------------------------
+  
     # log(e_{n+1}) vs log(e_n)
     log_e_n = np.log(errors[:-1])
     log_e_np1 = np.log(errors[1:])
@@ -101,67 +78,77 @@ def error_analysis(x_true, func, numerical_method, *method_args,
 
     order_est = slope
 
-    print(f"Estimated order of convergence: {order_est:.2f}")
+    #print(f"Estimated order of convergence: {order_est:.2f}")
+    
+    # Create ONE figure with TWO subplots
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6), sharey=False)
+    fig.suptitle(f"Numerical Method: {numerical_method.__name__}", fontsize=14, fontweight='bold')
+
+    # Left: Error plot
+    if plot_error:
+        ax1.semilogy(errors, marker='o', color='darkblue', linewidth=1.2)
+        ax1.set_xlabel("Iteration")
+        ax1.set_ylabel("Absolute Error")
+        ax1.set_title("Error vs Iteration (log scale)")
+        ax1.grid(True, which="both", ls="--", alpha=0.7)
+
+    # Right: Convergence map
+    if plot_convergence and len(iterates) > 1:
+        ax2.plot(iterates[:-1], iterates[1:], marker='o', color='darkgreen', linewidth=1.2)
+        ax2.set_xlabel("$x_i$")
+        ax2.set_ylabel("$x_{i+1}$")
+        ax2.set_title("Convergence Map ($x_{i+1}$ vs $x_i$)")
+        ax2.grid(True)
+# === Add order value to legend using invisible proxy ===
+        order_line = Line2D([], [], color='black', linestyle='none',  # completely invisible
+                            label=f'Order of convergence: {order_est:.3f}')
+        ax2.add_artist(order_line)
+
+        ax2.legend(loc='best', fontsize=10, framealpha=0.9)
+
+    # === Save the figure with meaningful name ===
+    filename = f"plot_{numerical_method.__name__}.png"
+    fig.savefig(filename, dpi=300, bbox_inches='tight') # Save the plot (useful for homework submission)
+    print(f"Saved convergence plot for {numerical_method.__name__} as {filename}")
+    
+    # === Add instruction text at the bottom of the whole figure ===
+    fig.text(0.5, 0.01,          # x=0.5 → center, y=0.01 → very bottom
+         "Press Q for next set of graphs",
+         ha='center', va='bottom',
+         fontsize=14, color='black', style='italic')
+
+    plt.tight_layout(rect=[0, 0.04, 1, 0.96])  # leave a bit more space at bottom 
+    plt.show()
 
     return order_est
 
-    # Test Function
-    # -----------------------------------
+# Test Function
 def f(x):
     return x**2 - 2
 
-    # Fixed point function
+# Fixed point function
 def g(x):
     return 0.5 * (x + 2/x)
-# -----------------------------------
+
 # Optimization Test Function
-# -----------------------------------
 def f_opt(x):
-    """f(x) = -0.3x⁴ + 1.8x³ - 1.2x² + 2x"""
-    return -0.3 * x**4 + 1.8 * x**3 - 1.2 * x**2 + 2 * x
+    """f(x) = -0x²/10 + 2sinx"""
+    return -x**2/10 + 2*np.sin(x)
 
 # Example test program (replace x_true with the known exact root/max for your problem)
 if __name__ == "__main__":
     
+    # Root Finding Methods
     x_true = np.sqrt(2)
     TOL = 1e-8
-
-    print("\n==============================")
-    print("Bisection Method")
-    print("==============================")
-    error_analysis(x_true, f, bisection_gen, 1, 2, TOL)
-
-    print("\n==============================")
-    print("Regula Falsi Method")
-    print("==============================")
-    error_analysis(x_true, f, regula_falsi_gen, 1, 2, TOL)
-
-    print("\n==============================")
-    print("Newton-Raphson Method")
-    print("==============================")
-    error_analysis(x_true, f, newton_raphson_gen, 1, TOL)
-
-    print("\n==============================")
-    print("Fixed-Point Iteration")
-    print("==============================")
-    error_analysis(x_true, f, fixed_point_gen, 1, TOL, g)
-
-    print("\n==============================")
-    print("Secant Method")
-    print("==============================")
-    error_analysis(x_true, f, secant_gen, 1, 2, TOL)
+    error_analysis(x_true, f, Bisection, 1, 2, TOL)
+    error_analysis(x_true, f, Regula_Falsi, 1, 2, TOL)
+    error_analysis(x_true, f, Newton_Raphson, 1, TOL)
+    error_analysis(x_true, f, Fixed_Point, 1, TOL, g)
+    error_analysis(x_true, f, Secant, 1, 2, TOL)
     
     # Optimization Methods (Maxima of function)
-    maxima = 4.1122
-    TOL_opt = 1e-5
-    print("\n==============================")
-    print("Golden Section Search")
-    print("==============================")
-     # bracket around maximum
-    error_analysis(maxima, f_opt, golden_section_search_gen, -2, 4, TOL_opt)
-    
-    print("\n==============================")
-    print("Parabolic Interpolation")
-    print("==============================")
-    # three points around max
-    error_analysis(maxima, f_opt, parabolic_interpol_gen, 1.7, 2.0, 5.0, TOL_opt)
+    maxima = 1.42755
+    TOL_opt = 1e-6
+    error_analysis(maxima, f_opt, Golden_Section_Search, 0, 4, TOL_opt)
+    error_analysis(maxima, f_opt, Parabolic_Interpol, 0, 1, 4, TOL_opt)
