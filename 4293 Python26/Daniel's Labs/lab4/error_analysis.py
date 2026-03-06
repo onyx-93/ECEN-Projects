@@ -32,23 +32,24 @@ def error_analysis(x_true, func, numerical_method, *method_args,
     iterates = []
     errors = []
 
-    # Run generator
+# Run generator
     try:
-        # If fixed point method → do NOT pass func
-        if numerical_method.__name__ == "Fixed_Point":
-            generator = numerical_method(*method_args)
+        # Selectively apply divergence check only to point-wise methods
+        if numerical_method.__name__ in ["Newton_Raphson", "Secant", "Fixed_Point"]:
+            generator = numerical_method(*method_args) if numerical_method.__name__ == "Fixed_Point" else numerical_method(*method_args, func)
+            for x in generator:
+                iterates.append(x)
+                errors.append(abs(x - x_true))
+                # Divergence check only for these methods: "Newton_Raphson", "Secant", "Fixed_Point"
+                if len(errors) > 5:
+                    if errors[-1] > errors[-2] > errors[-3]:
+                        raise ValueError("Method appears to be diverging.")
         else:
+            # Bracket / search methods — no divergence check
             generator = numerical_method(*method_args, func)
-
-        for x in generator:
-            iterates.append(x)
-            errors.append(abs(x - x_true))
-
-            # Divergence detection
-            if len(errors) > 5:
-                if errors[-1] > errors[-2] > errors[-3]:
-                    raise ValueError("Method appears to be diverging.")
-                    #return None
+            for x in generator:
+                iterates.append(x)
+                errors.append(abs(x - x_true))
 
     except Exception as e:
         print("Generator stopped:", e)
@@ -68,17 +69,19 @@ def error_analysis(x_true, func, numerical_method, *method_args,
         return None
 
 
-    # Order of Convergence Estimate
-  
-    # log(e_{n+1}) vs log(e_n)
-    log_e_n = np.log(errors[:-1])
-    log_e_np1 = np.log(errors[1:])
+# Order of Convergence Estimate - log(e_{n+1}) vs log(e_n)
+    start_idx = 3 if len(errors) > 8 else 1   # try 2 or 3 — 2 is usually good
 
-    slope, intercept = np.polyfit(log_e_n, log_e_np1, 1)
+    log_e_n   = np.log(errors[start_idx:-1])
+    log_e_np1 = np.log(errors[start_idx+1:])
 
-    order_est = slope
+    if len(log_e_n) >= 2:
+        slope, intercept = np.polyfit(log_e_n, log_e_np1, 1)
+        order_est = slope
+    else:
+        order_est = np.nan
 
-    #print(f"Estimated order of convergence: {order_est:.2f}")
+    print(f"Estimated order of convergence: {order_est:.2f}")
     
     # Create ONE figure with TWO subplots
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 6), sharey=False)
@@ -101,7 +104,7 @@ def error_analysis(x_true, func, numerical_method, *method_args,
         ax2.grid(True)
 # === Add order value to legend using invisible proxy ===
         order_line = Line2D([], [], color='black', linestyle='none',  # completely invisible
-                            label=f'Order of convergence: {order_est:.3f}')
+                            label=f'Order of convergence: {order_est:.2f}')
         ax2.add_artist(order_line)
 
         ax2.legend(loc='best', fontsize=10, framealpha=0.9)
@@ -122,8 +125,52 @@ def error_analysis(x_true, func, numerical_method, *method_args,
 
     return order_est
 
-# Test Function
+# Test Functions set 1
 def f(x):
+    '''
+        # TEST #1
+    # Root Finding Methods
+    x_true = np.sqrt(2)
+    TOL = 1e-7
+    print('\n Bisection Method')
+    print("=" * 90)
+    #  Bisection(xl, xu, TOL)
+    error_analysis(x_true, f, Bisection, 1, 2, TOL)     
+    
+    print('\n Regula Falsi Method')
+    print("=" * 90)
+    # Regula_Falsi(xl, xu, TOL)
+    error_analysis(x_true, f, Regula_Falsi, 1, 2, TOL)  
+    
+    print('\n Newton-Raphson Method')
+    print("=" * 90)
+    # Newton_Raphson(x0, TOL)
+    error_analysis(x_true, f, Newton_Raphson, 1, TOL)   
+    
+    print('\n Fixed-Point Method')
+    print("=" * 90)
+    # Fixed_Point(x0, TOL)
+    error_analysis(x_true, f, Fixed_Point, 1, TOL, g)   
+    
+    print('\n Secant Method')
+    print("=" * 90)
+    # Secant(x0, x1, TOL)
+    error_analysis(x_true, f, Secant, 1, 2, TOL)        
+    
+    # Optimization Methods (Maxima of function)
+    maxima = 1.42755
+    TOL_opt = 1e-10
+    print('\n Golden Section Search Method')
+    print("=" * 90)
+    # Golden_Section_Search(xl, xu, TOL)
+    error_analysis(maxima, f_opt, Golden_Section_Search, 0, 4, TOL_opt)     
+    
+    print('\n Parabolic Interpolation Method')
+    print("=" * 90)
+    # Parabolic_Interpol(x1, x2, x3, TOL)
+    error_analysis(maxima, f_opt, Parabolic_Interpol, 0, 1, 4, TOL_opt)        
+    
+    '''
     return x**2 - 2
 
 # Fixed point function
@@ -132,23 +179,109 @@ def g(x):
 
 # Optimization Test Function
 def f_opt(x):
-    """f(x) = -0x²/10 + 2sinx"""
+    """f(x) = -x²/10 + 2sinx"""
     return -x**2/10 + 2*np.sin(x)
 
-# Example test program (replace x_true with the known exact root/max for your problem)
+
+# Test Functions set 2
+def f1(x):
+    """f(x) = x³ - 3x + 1
+
+        # TEST #2
+# ── Root finding ─ targeting middle root ≈ 0.347 ──────────────
+    TOL = 1e-10
+    x_true = 0.34729635533386066   # more precise value
+    print('\n Bisection Method')
+    print("=" * 90)
+    #  Bisection(xl, xu, TOL)
+    error_analysis(x_true, f1, Bisection, 0.0, 0.8, TOL)
+
+    print('\n Regula Falsi Method')
+    print("=" * 90)
+    # Regula_Falsi(xl, xu, TOL)
+    error_analysis(x_true, f1, Regula_Falsi, 0.0, 0.8, TOL)
+    
+    print('\n Newton-Raphson Method')
+    print("=" * 90)
+    # Newton_Raphson(x0, TOL)
+    error_analysis(x_true, f1, Newton_Raphson, 0.2, TOL)
+
+    print('\n Secant Method')
+    print("=" * 90)
+    # Secant(x0, x1, TOL)
+    error_analysis(x_true, f1, Secant, 0.1, 0.6, TOL)
+    
+    print('\n Fixed-Point Method')
+    print("=" * 90)
+    # Fixed_Point(x0, TOL)
+    error_analysis(x_true, f1, Fixed_Point, 0.5,   TOL, g1)
+
+    # ── Optimization ── sharp peak at 1.3 ─────────────────────────
+    TOL_opt = 1e-7
+    
+    print('\n Golden Section Search Method')
+    print("=" * 90)
+    # Golden_Section_Search(xl, xu, TOL)
+    error_analysis(1.3, f1_opt, Golden_Section_Search, 0.0, 3.0, TOL_opt)
+    
+    print('\n Parabolic Interpolation Method')
+    print("=" * 90)
+    # Parabolic_Interpol(x1, x2, x3, TOL)
+    error_analysis(1.3, f1_opt, Parabolic_Interpol, 0.8, 1.2, 1.6, TOL_opt)
+    
+    """
+    return x**3 - 3*x + 1 
+
+# Fixed point function
+def g1(x):
+    return (3*x - 1)**(1/3.0)         # x³ = 3x - 1  →  x = (3x - 1)^{1/3}
+
+# Optimization Test Function
+def f1_opt(x):
+    """f(x) = exp(-30(x-1.3)²) + 0.4·exp(-80(x-2.1)²)"""
+    return np.exp(-30*(x-1.3)**2) + 0.4*np.exp(-80*(x-2.1)**2)  #maxima = 1.3
+
+# Example test program (replace x_true and maxima with the known exact root/max for your problem)
 if __name__ == "__main__":
+   
+ # TEST #2
+# ── Root finding ─ targeting middle root ≈ 0.347 ──────────────
+    TOL = 1e-10
+    x_true = 0.34729635533386066   # more precise value
+    print('\n Bisection Method')
+    print("=" * 90)
+    #  Bisection(xl, xu, TOL)
+    error_analysis(x_true, f1, Bisection, 0.0, 0.8, TOL)
+
+    print('\n Regula Falsi Method')
+    print("=" * 90)
+    # Regula_Falsi(xl, xu, TOL)
+    error_analysis(x_true, f1, Regula_Falsi, 0.0, 0.8, TOL)
     
-    # Root Finding Methods
-    x_true = np.sqrt(2)
-    TOL = 1e-8
-    error_analysis(x_true, f, Bisection, 1, 2, TOL)
-    error_analysis(x_true, f, Regula_Falsi, 1, 2, TOL)
-    error_analysis(x_true, f, Newton_Raphson, 1, TOL)
-    error_analysis(x_true, f, Fixed_Point, 1, TOL, g)
-    error_analysis(x_true, f, Secant, 1, 2, TOL)
+    print('\n Newton-Raphson Method')
+    print("=" * 90)
+    # Newton_Raphson(x0, TOL)
+    error_analysis(x_true, f1, Newton_Raphson, 0.2, TOL)
+
+    print('\n Secant Method')
+    print("=" * 90)
+    # Secant(x0, x1, TOL)
+    error_analysis(x_true, f1, Secant, 0.1, 0.6, TOL)
     
-    # Optimization Methods (Maxima of function)
-    maxima = 1.42755
-    TOL_opt = 1e-6
-    error_analysis(maxima, f_opt, Golden_Section_Search, 0, 4, TOL_opt)
-    error_analysis(maxima, f_opt, Parabolic_Interpol, 0, 1, 4, TOL_opt)
+    print('\n Fixed-Point Method')
+    print("=" * 90)
+    # Fixed_Point(x0, TOL)
+    error_analysis(x_true, f1, Fixed_Point, 0.5,   TOL, g1)
+
+    # ── Optimization ── sharp peak at 1.3 ─────────────────────────
+    TOL_opt = 1e-7
+    
+    print('\n Golden Section Search Method')
+    print("=" * 90)
+    # Golden_Section_Search(xl, xu, TOL)
+    error_analysis(1.3, f1_opt, Golden_Section_Search, 0.0, 3.0, 0.01)
+    
+    print('\n Parabolic Interpolation Method')
+    print("=" * 90)
+    # Parabolic_Interpol(x1, x2, x3, TOL)
+    error_analysis(1.3, f1_opt, Parabolic_Interpol, 0.8, 1.2, 1.6, TOL_opt)
