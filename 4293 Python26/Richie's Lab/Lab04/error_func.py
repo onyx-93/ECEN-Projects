@@ -10,12 +10,11 @@ def error_analysis(
     f,
     method_gen,
     max_iter,
-    *method_args,
     tol=1e-10,
     plot_error=True,
     plot_convergence=True,
 ):
-    gen = method_gen(*method_args)
+    gen = method_gen()
 
     xs = []
     errors = []
@@ -131,7 +130,5 @@ def error_analysis(
         plt.tight_layout()
         plt.show()
 
-
-        
-
     return p_est
+
