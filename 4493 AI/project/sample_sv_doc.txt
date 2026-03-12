@@ -6,3 +6,13 @@ module adder (
     assign sum = a + b;
 endmodule
 // Documentation: This is a simple 4-bit adder in SystemVerilog.
+
+
+
+
+
+
+
+
+
+

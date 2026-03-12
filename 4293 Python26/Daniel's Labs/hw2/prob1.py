@@ -71,7 +71,7 @@ if __name__ == "__main__":
     
     gaussian = gaussian_elimination_partial_pivot(A, b)
     
-    print("\nGaussian Eliminatin approach")
+    print("\nGaussian Elimination approach")
     print("-"*30)
     print(f"Node Voltage va: {gaussian[0]:.2f} V")
     print(f"Node Voltage vb: {gaussian[1]:.2f} V")
