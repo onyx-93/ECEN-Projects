@@ -4,11 +4,15 @@ from windowing import hann, my_fft, natural_cubic_spline
 import sounddevice as sd          # most popular simple choice
 import time
 
+
+
+# I used Grok to explain me how to use the sound device libray and how to implement a time delay
+
 def record_audio(duration, fs, channels=1):
     print("\nGet ready to record a 4-second audio clip.")
     for i in range(10, 0, -1):
         print(f"Recording starts in {i}...", end="\r")
-        time.sleep(1)
+        time.sleep(1) # time delay
     print("\n>>> SPEAK NOW! <<<")
     recording = sd.rec(int(duration * fs), samplerate=fs, channels=channels, dtype='float32')
     sd.wait()  # wait until recording is finished

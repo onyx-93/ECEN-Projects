@@ -36,6 +36,8 @@ def hann(x, window_length=1024, overlap=256, zero_pad=True):
         
         yield W * segment
 
+# I used Youtube and Grok to have a better understanding on FFT and how to implement Cooley-Tukey algorithm
+
 def my_fft(x):
     """
     Recursive radix-2 Cooley-Tukey FFT.
@@ -61,6 +63,8 @@ def my_fft(x):
         even - factor * odd
     ])
     
+# I used Grok to have a better understanding cubic spline interpolation and natural made sense to me
+
 def natural_cubic_spline(x, y, xnew):
     """
     Natural cubic spline interpolation.
