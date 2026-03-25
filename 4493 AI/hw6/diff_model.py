@@ -2,15 +2,24 @@ from diffusers import StableDiffusionImg2ImgPipeline, DPMSolverMultistepSchedule
 import torch
 from PIL import Image
 
-#image-to-image (img2img) generation
-
 torch.backends.cuda.matmul.allow_tf32 = True
 
-# Load your base image
-init_image = Image.open("input.png").convert("RGB")
-init_image = init_image.resize((512, 512))  # Must match your desired output size
+# Load input image (your face or base image)
+init_image = Image.open("daniel_headshot.jpg").convert("RGB")
 
-# Load the img2img pipeline
+# Get dimensions
+w, h = init_image.size
+crop_size = min(w, h)
+left = (w - crop_size) // 2
+top = int((h - crop_size) * 0.3)  # 👈 shift upward (focus on face)
+right = left + crop_size
+bottom = top + crop_size
+
+# Crop and resize
+init_image = init_image.crop((left, top, right, bottom))
+init_image = init_image.resize((512, 512))
+
+
 pipe = StableDiffusionImg2ImgPipeline.from_pretrained(
     "runwayml/stable-diffusion-v1-5",
     torch_dtype=torch.float32,
@@ -20,21 +29,36 @@ pipe = StableDiffusionImg2ImgPipeline.from_pretrained(
 
 pipe = pipe.to("cuda")
 
-# Optional stability improvements
+# Stability tweaks
 pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
 pipe.disable_xformers_memory_efficient_attention()
 pipe.enable_attention_slicing()
 
-# Generate a new image based on prompt and init image
+# Your assignment prompt (slightly improved)
+prompt = (
+    "apple memoji style avatar, 3D cartoon, smooth plastic skin, "
+    "simple facial features, rounded face, large expressive eyes, "
+    "small nose, simplified eyebrows, clean shaven, "
+    "male, stoic expression, suit and tie, "
+    "centered head and shoulders portrait, "
+    "plain white background, studio lighting, no shadows, high quality"
+)
+
+negative_prompt = (
+    "realistic, photo, hyperrealistic, skin texture, pores, wrinkles, "
+    "detailed beard, facial hair, sharp details, harsh shadows, "
+    "complex background, clutter, noise, grain, low quality"
+)
+
 image = pipe(
-    prompt="a cute cartoon dog swimming in the beach, bright colors, children's book illustration, happy, friendly, vibrant, detailed",
-    negative_prompt="dark, scary, blurry, low quality, deformed, ugly, NSFW",
-    image=init_image,           # <-- provide the input image
-    strength=0.7,               # 0.0 = keep image as-is, 1.0 = completely transform
-    num_inference_steps=30,
-    guidance_scale=7.5,
+    prompt=prompt,
+    negative_prompt = negative_prompt,    
+    image=init_image,
+    strength=0.78,   # key parameter
+    num_inference_steps=40,
+    guidance_scale=10.0,
     generator=torch.Generator("cuda").manual_seed(1234)
 ).images[0]
 
-image.save("custom_image.png")
-print('✅ Success! Image saved as custom_image.png')
+image.save("memoji_avatar.png")
+print("✅ Success! Image saved as memoji_avatar.png")
