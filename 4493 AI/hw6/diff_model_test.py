@@ -1,19 +1,11 @@
-from diffusers import StableDiffusionImg2ImgPipeline, DPMSolverMultistepScheduler
+from diffusers import DiffusionPipeline, DPMSolverMultistepScheduler
 import torch
-from PIL import Image
-
-#image-to-image (img2img) generation
 
 torch.backends.cuda.matmul.allow_tf32 = True
 
-# Load your base image
-init_image = Image.open("input.png").convert("RGB")
-init_image = init_image.resize((512, 512))  # Must match your desired output size
-
-# Load the img2img pipeline
-pipe = StableDiffusionImg2ImgPipeline.from_pretrained(
+pipe = DiffusionPipeline.from_pretrained(
     "runwayml/stable-diffusion-v1-5",
-    torch_dtype=torch.float32,
+    torch_dtype=torch.float32,  # <-- FIX
     safety_checker=None,
     requires_safety_checker=False
 )
@@ -23,18 +15,18 @@ pipe = pipe.to("cuda")
 # Optional stability improvements
 pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)
 pipe.disable_xformers_memory_efficient_attention()
+
 pipe.enable_attention_slicing()
 
-# Generate a new image based on prompt and init image
 image = pipe(
     prompt="a cute cartoon dog swimming in the beach, bright colors, children's book illustration, happy, friendly, vibrant, detailed",
     negative_prompt="dark, scary, blurry, low quality, deformed, ugly, NSFW",
-    image=init_image,           # <-- provide the input image
-    strength=0.7,               # 0.0 = keep image as-is, 1.0 = completely transform
     num_inference_steps=30,
     guidance_scale=7.5,
+    height=512,
+    width=512,
     generator=torch.Generator("cuda").manual_seed(1234)
 ).images[0]
 
-image.save("custom_image.png")
-print('✅ Success! Image saved as custom_image.png')
+image.save("test_dog.png")
+print('Succes! Image saved as test_dog.png')
