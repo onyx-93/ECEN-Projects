@@ -88,7 +88,7 @@ print("You can now ask questions about your project, SystemVerilog code, or any 
 print("Type 'quit' to exit.\n")
 
 while True:
-    query = input("Your question: ").strip()
+    query = input("Write a single 2 input AND gate module ").strip()
     if query.lower() in ['quit', 'q', 'exit']:
         print("Goodbye!")
         break
