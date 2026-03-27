@@ -1,28 +1,8 @@
 from windowing import hann
 import numpy as np
 import matplotlib.pyplot as plt
+import algs
 
-def fft_recursive(arr):
-    # Initialize array length and base case
-    N = len(arr)
-    if N == 1:
-        return np.array([arr[0]], dtype=complex)
-    # Split array into even and odd parts to start recursion
-    if N % 2 != 0:
-        raise ValueError("\n\tArray length must be a power of 2.\n")
-
-    X_even = fft_recursive(arr[0::2])
-    X_odd = fft_recursive(arr[1::2])
-
-    # Recombination of factors (Butterfly) step
-    X = np.zeros(N, dtype=complex)
-    for k in range(N//2):
-        multiplier = np.exp(-2j * np.pi * k/N)
-        p = X_even[k]
-        q = X_odd[k] * multiplier
-        X[k] = p + q
-        X[k + N//2] = p - q
-    return X
 
 if __name__ == "__main__":
     # Generate a sample noise signal
@@ -39,7 +19,7 @@ if __name__ == "__main__":
     N = 1024 # samples per chunk of windowed audio
     for chunk in hann(x, N):
         # Compute the fast Fourier transform (FFT) of this chunk
-        X_full = fft_recursive(chunk)
+        X_full = algs.fft_recursive(chunk)
         X = X_full[0:N//2]
         
         # Compute the power spectral density (PSD) of this chunk
