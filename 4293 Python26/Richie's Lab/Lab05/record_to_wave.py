@@ -2,7 +2,7 @@ import sounddevice as sd
 import soundfile as sf
 import numpy as np
 
-def record_to_wav(filename="record_mono.wav"):
+def record_to_wav(filename="record_mono1.wav"):
     fs = int(input("\n\tEnter sampling rate in Hz (44100–48000): "))
     duration = int(input("\n\tEnter recording duration in seconds (5–10): "))
 

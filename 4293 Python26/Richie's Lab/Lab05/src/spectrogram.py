@@ -39,7 +39,7 @@ if __name__ == "__main__":
 
     # Record, interpolate, and show sample.
     # 1) Load recorded mono audio
-    audio_mono, fs = sf.read("record_mono.wav")   # make sure you saved mono
+    audio_mono, fs = sf.read("record_mono1.wav")   # make sure you saved mono
 
     # 2) Optionally trim to first few seconds
     max_seconds = 5
