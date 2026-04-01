@@ -43,3 +43,84 @@ The output `sum` is also a 5-bit vector, represented as `[4:0]`, which means it 
 Overall, this adder module performs a simple 4-bit addition operation and produces a 5-bit result.
 └────────────────────────────────────────────────────────────┘
 
+┌────────────────────────────────────────────────────────────┐
+Query: write a single 2-input AND gate module in SystemVerilog
+Date/Time: 2026-04-01 17:57:21
+─ Response ─────────────────────────────────────────────────
+Here is the complete module for a 2-input AND gate in SystemVerilog:
+
+```systemverilog
+module and_gate(input logic a, input logic b, output logic y);
+
+assign y = a & b;
+
+endmodule
+```
+
+Explanation:
+
+* The `module` keyword is used to define a new module.
+* The `and_gate` module takes two input signals `a` and `b` and one output signal `y`.
+* The `assign` statement is used to assign the output `y` the result of the logical AND operation between `a` and `b`.
+* The `endmodule` keyword is used to mark the end of the module definition.
+
+This module is a simple example of a combinational logic circuit, which is a fundamental building block in digital design. It can be used as a starting point for more complex designs or as a component in a larger system.
+└────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────┐
+Query: write a testbench so I can test the AND gate module
+Date/Time: 2026-04-01 18:34:28
+─ Response ─────────────────────────────────────────────────
+Here is the testbench module for the AND gate module:
+
+```verilog
+module and_gate_testbench;
+
+  // Input signals
+  logic clk;
+  logic a;
+  logic b;
+  logic c;
+
+  // Output signals
+  logic q;
+
+  // Instantiate the AND gate module
+  and_gate and_gate_inst (
+    .A(a),
+    .B(b),
+    .C(c),
+    .Q(q)
+  );
+
+  // Clock signal
+  always #5 clk = ~clk;
+
+  // Testbench logic
+  initial begin
+    // Initialize inputs
+    a = 0;
+    b = 0;
+    c = 0;
+
+    // Test the AND gate
+    #10 a = 1; b = 0; c = 0; // Test with A=1, B=0, C=0
+    #10 a = 1; b = 1; c = 0; // Test with A=1, B=1, C=0
+    #10 a = 1; b = 0; c = 1; // Test with A=1, B=0, C=1
+    #10 a = 1; b = 1; c = 1; // Test with A=1, B=1, C=1
+
+    // Test the AND gate with all inputs low
+    #10 a = 0; b = 0; c = 0; // Test with all inputs low
+
+    // Stop the simulation
+    #20 $stop;
+  end
+
+endmodule
+```
+
+This testbench module instantiates the AND gate module and provides a clock signal. The testbench logic initializes the inputs and then tests the AND gate with different combinations of inputs. The simulation is stopped after all tests are completed.
+
+Note that this testbench module does not drive any signals to the AND gate module, as the AND gate module is designed to be a standalone module.
+└────────────────────────────────────────────────────────────┘
+

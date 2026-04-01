@@ -25,9 +25,9 @@ pdf_loader = DirectoryLoader(
 # Load text/SystemVerilog files (recursive)
 text_loader = DirectoryLoader(
     path="./knowledge_base",
-    glob="**/*.{sv,v,vh,txt,md}",
+    glob="**/*",
     loader_cls=TextLoader,
-    loader_kwargs={"encoding": "utf-8", "errors": "ignore"},
+    loader_kwargs={"encoding": "utf-8"},
     show_progress=True,
     silent_errors=True,
 )
@@ -112,7 +112,7 @@ print("Example: Write a single 2-input AND gate module in SystemVerilog")
 print("Type 'quit' to exit.\n")
 
 while True:
-    query = input("Write a single 2-input AND gate module in SystemVerilog").strip()
+    query = input("Write a your question: ").strip()
     
     if query.lower() in ['quit', 'q', 'exit']:
         print("Goodbye!")
