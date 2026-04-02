@@ -37,6 +37,9 @@ if __name__ == "__main__":
     # plt.imshow(psds, aspect='auto', origin='lower')
     # plt.show()
 
+    # ================= This is the audio process part ==================
+
+
     # Record, interpolate, and show sample.
     # 1) Load recorded mono audio
     audio_mono, fs = sf.read("record_mono1.wav")   # make sure you saved mono

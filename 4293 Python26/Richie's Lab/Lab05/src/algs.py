@@ -1,3 +1,12 @@
+# Ricardo Landeros Aranda | Oklahoma State University
+# ECEN 4293 Numerical Methods in Python for Engineers
+# Lab 5 Spring 2026
+
+
+# The code of this lab was completed using generative AI to write clear and compact code
+# as well as a helping tool to understand and implement the FFT and the cubic spline
+# Used perplexity pro with the LLM Claude Sonet 4.6
+
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy as sc
