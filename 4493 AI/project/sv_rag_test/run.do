@@ -6,36 +6,48 @@
 # Go Cowboys!!!!!!
 #
 # All Rights Reserved.
+#
+# THIS WORK CONTAINS TRADE SECRET AND PROPRIETARY INFORMATION
+# WHICH IS THE PROPERTY OF MENTOR GRAPHICS CORPORATION
+# OR ITS LICENSORS AND IS SUBJECT TO LICENSE TERMS.
+
+# Use this run.do file to run this example.
+# Either bring up ModelSim and type the following at the "ModelSim>" prompt:
+#     do run.do
+# or, to run from a shell, type the following at the shell prompt:
+#     vsim -do run.do -c
+# (omit the "-c" to see the GUI while running from the shell)
 
 onbreak {resume}
 
-# Create library
+# create library
 if [file exists work] {
     vdel -all
 }
 vlib work
 
-# Compile source files
+# compile source files
 vlog test_1.sv test_tb.sv
 
-# Start and run simulation 
-# Changed work.tb to work.and_gate_testbench
+# start and run simulation
 vsim -voptargs=+acc work.and_gate_testbench
 
-# Only useful if NOT running with -c (batch mode)
 view list
 view wave
 
-# Display input and output signals as hexadecimal values
-# Changed path to match your actual module name
-add wave -hex -r /and_gate_testbench/*
+-- display input and output signals as hexidecimal values
+# Diplays All Signals recursively
+# add wave -hex -r /and_gate_testbench/*
+add wave -noupdate -divider "Testbench Signals"
+add wave -hex /and_gate_testbench/clk
+add wave -hex /and_gate_testbench/a
+add wave -hex /and_gate_testbench/b
+add wave -hex /and_gate_testbench/y
 
-# Add list and log
 add list -hex -r /and_gate_testbench/*
 add log -r /*
 
-# Set Wave Output Items 
-# Note: These commands mostly apply to the GUI environment
+-- Set Wave Output Items 
 TreeUpdate [SetDefaultTree]
 WaveRestoreZoom {0 ps} {75 ns}
 configure wave -namecolwidth 150
@@ -47,5 +59,5 @@ configure wave -datasetprefix 0
 configure wave -rowmargin 4
 configure wave -childrowmargin 2
 
-# Run the Simulation
-run 250 ns
+-- Run the Simulation
+run 550 ns
