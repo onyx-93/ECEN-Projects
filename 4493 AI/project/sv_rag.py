@@ -112,7 +112,9 @@ print("Example: Write a single 2-input AND gate module in SystemVerilog")
 print("Type 'quit' to exit.\n")
 
 while True:
+    print("Type 'quit' to exit.\n")
     query = input("Write a your question: ").strip()
+    
     
     if query.lower() in ['quit', 'q', 'exit']:
         print("Goodbye!")
