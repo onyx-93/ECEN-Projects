@@ -27,7 +27,7 @@ if [file exists work] {
 vlib work
 
 # compile source files
-vlog silly.sv silly_tb.sv
+vlog full_adder.sv full_adder_tb.sv
 
 # start and run simulation
 vsim -voptargs=+acc work.tb
@@ -38,15 +38,7 @@ view wave
 -- display input and output signals as hexidecimal values
 # Diplays All Signals recursively
 add wave -hex -r /tb/*
-# add wave -noupdate -divider -height 32 "Datapath"
-# add wave -hex /tb/dut/part1/*
-# add wave -noupdate -divider -height 32 "Control"
-# add wave -hex /tb/dut/part2/*
-# add wave -noupdate -divider -height 32 "Note for Speaker"
-# add wave -hex /tb/dut/part1/note1/*
-# add wave -hex /tb/dut/part1/note2/*
-# add wave -hex /tb/dut/part1/note3/*
-# add wave -hex /tb/dut/part1/note4/*
+
 
 add list -hex -r /tb/*
 add log -r /*
