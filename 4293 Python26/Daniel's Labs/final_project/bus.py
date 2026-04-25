@@ -16,7 +16,7 @@ def load_system_data(json_file):
     gen_data = data.get('gen', [])
     baseMVA = data.get('baseMVA', 100.0)
 
-    # Merge generator scheduled powers into the corresponding buses
+    # Merge generator data into buses (so solver sees Pg/Qg on the bus)
     for g in gen_data:
         bus_id = g['bus']
         for b in bus_data:
@@ -35,7 +35,7 @@ def load_system_data(json_file):
 
 
 def print_power_flow_results(results, bus_data):
-    """Print results exactly like your MATLAB output."""
+    """Print results in a clear and organized manner."""
     print("=" * 60)
     print("          IEEE 9-Bus Newton-Raphson Power Flow Results")
     print("=" * 60)
@@ -76,6 +76,7 @@ if __name__ == "__main__":
 
     print("Running Newton-Raphson Power Flow Solver...\n")
 
+    # Run the power flow solver and get results
     results = newton_raphson(
         bus_data=bus_data,
         branch_data=branch_data,
