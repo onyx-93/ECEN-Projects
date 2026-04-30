@@ -11,10 +11,10 @@ z2
 cModel Technology
 Z0 dC:/Users/Owner/GitHub/ECEN-Projects/4493 AI/project/sv_rag_test/full_adder_test
 T_opt
-!s110 1775177390
-Vo=0oQaHb83AAWhg;ZKID90
+!s110 1777573417
+Voh:K=Ak8>B5A?<ZFMMjVR2
 04 2 4 work tb fast 0
-=1-484d7eca8aaf-69cf0eae-13b-84f0
+=1-484d7eca8aaf-69f39e1f-69-14bd8
 !s124 OEM100
 o-quiet -auto_acc_if_foreign -work work +acc
 Z1 tCvgOpt 0
@@ -22,7 +22,7 @@ n@_opt
 OL;O;2021.3;73
 vFullAdder
 Z2 DXx6 sv_std 3 std 0 22 9oUSJO;AeEaW`l:M@^WG92
-Z3 !s110 1775177389
+Z3 !s110 1777573391
 !i10b 1
 !s100 QH5V25`Hl_b?bA2I?c@JG3
 IK>0iWBPn3262;?gT22z_D3
@@ -38,7 +38,7 @@ Z5 OL;L;2021.3;73
 r1
 !s85 0
 31
-Z6 !s108 1775177389.000000
+Z6 !s108 1777573388.000000
 Z7 !s107 full_adder_tb.sv|full_adder.sv|
 Z8 !s90 -reportprogress|300|full_adder.sv|full_adder_tb.sv|
 !i113 0

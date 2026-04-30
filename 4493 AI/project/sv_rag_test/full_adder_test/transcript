@@ -13,22 +13,20 @@
 # //
 # do full.do
 # Model Technology ModelSim SE-64 vlog 2021.3 Compiler 2021.07 Jul 13 2021
-# Start time: 19:49:49 on Apr 02,2026
+# Start time: 13:23:08 on Apr 30,2026
 # vlog -reportprogress 300 full_adder.sv full_adder_tb.sv 
 # -- Compiling module FullAdder
 # -- Compiling module tb
 # 
 # Top level modules:
 # 	tb
-# End time: 19:49:49 on Apr 02,2026, Elapsed time: 0:00:00
+# End time: 13:23:11 on Apr 30,2026, Elapsed time: 0:00:03
 # Errors: 0, Warnings: 0
 # vsim -voptargs="+acc" work.tb 
-# Start time: 19:49:49 on Apr 02,2026
+# Start time: 13:23:12 on Apr 30,2026
 # ** Note: (vsim-3812) Design is being optimized...
 # Loading sv_std.std
 # Loading work.tb(fast)
 # Loading work.FullAdder(fast)
 # .main_pane.list.interior.cs.body
 # .main_pane.wave.interior.cs.body.pw.wf
-# End time: 19:53:06 on Apr 02,2026, Elapsed time: 0:03:17
-# Errors: 0, Warnings: 0
