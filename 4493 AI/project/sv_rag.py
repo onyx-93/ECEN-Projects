@@ -22,21 +22,30 @@ pdf_loader = DirectoryLoader(
     silent_errors=True,
 )
 
-# Load text/SystemVerilog files (recursive)
-text_loader = DirectoryLoader(
-    path="./knowledge_base",
-    glob="**/*",
-    loader_cls=TextLoader,
-    loader_kwargs={"encoding": "utf-8"},
-    show_progress=True,
-    silent_errors=True,
-)
-
 print("Loading PDFs...")
 pdf_docs = pdf_loader.load()
 
+# Selective text loader 
 print("Loading SystemVerilog and text files...")
-text_docs = text_loader.load()
+
+text_extensions = [
+    ".sv", ".v", ".vh", ".verilog",          # SystemVerilog / Verilog
+    ".txt", ".md", ".rst",                   # docs
+    ".py", ".c", ".cpp", ".h",               # source code
+    ".json", ".yml", ".yaml"                 # config files
+]
+
+text_docs = []
+for ext in text_extensions:
+    loader = DirectoryLoader(
+        path="./knowledge_base",
+        glob=f"**/*{ext}",                   # only these extensions
+        loader_cls=TextLoader,
+        loader_kwargs={"encoding": "utf-8"},
+        show_progress=True,                  # you can set False if you want less output
+        silent_errors=True,
+    )
+    text_docs.extend(loader.load())
 
 documents = pdf_docs + text_docs
 print(f"✅ Loaded {len(documents)} documents (including files from src/SV and sample_sv_doc.txt).")
@@ -48,8 +57,8 @@ if len(documents) == 0:
 
 # ====================== 2. CHUNKING ======================
 text_splitter = RecursiveCharacterTextSplitter(
-    chunk_size=700,
-    chunk_overlap=120,
+    chunk_size=450,
+    chunk_overlap=100,
     separators=["\n\n", "\nmodule ", "\nendmodule", "\n//", "\n/*", "\n    ", "\n", " ", ""]
 )
 
