@@ -31,8 +31,8 @@ print("Loading SystemVerilog and text files...")
 text_extensions = [
     ".sv", ".v", ".vh", ".verilog",          # SystemVerilog / Verilog
     ".txt", ".md", ".rst",                   # docs
-    ".py", ".c", ".cpp", ".h",               # source code
-    ".json", ".yml", ".yaml"                 # config files
+   # ".py", ".c", ".cpp", ".h",               # source code
+   # ".json", ".yml", ".yaml"                 # config files
 ]
 
 text_docs = []
