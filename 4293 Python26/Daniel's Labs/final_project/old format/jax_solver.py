@@ -60,7 +60,6 @@ def newton_raphson(bus_data, branch_data, baseMVA, max_iter, tol, damping):
     """Newton-Raphson power flow solver using JAX for the Jacobian matrix."""
     num_buses = max(bus['bus_i'] for bus in bus_data)
     Ybus_np = ybus(bus_data, branch_data, baseMVA)          # NumPy version for final calculations
-    
 
     # Prepare indices and static data
     bus_types = np.array([bus.get('type', 1) for bus in bus_data])
@@ -100,6 +99,8 @@ def newton_raphson(bus_data, branch_data, baseMVA, max_iter, tol, damping):
 
     # JAX automatically builds and JIT-compiles the Jacobian
     get_jacobian = jax.jit(jacobian(mismatch_fn))
+
+    print("Starting JAX Newton-Raphson...")
 
     success = False
     iterations = 0
