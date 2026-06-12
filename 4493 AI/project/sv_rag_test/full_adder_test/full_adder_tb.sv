@@ -22,41 +22,41 @@ module tb ();
    initial
      begin
     
-	#0   a = 1;	
-	#0   b = 1;	
+	#0   a = 0;	
+	#0   b = 0;	
 	#0   cin = 0;
 
-	#20  a = $random;	
-	#0   b = $random;	
-	#0   cin = $random;
+	#20  a = 0;	
+	#0   b = 0;	
+	#0   cin = 1;
 
-	#20  a = $random;	
-	#0   b = $random;	
-	#0   cin = $random;	
+	#20  a = 0;	
+	#0   b = 1;	
+	#0   cin = 0;	
 
-	#20  a = $random;	
-	#0   b = $random;	
-	#0   cin = $random;	
+	#20  a = 0;	
+	#0   b = 1;	
+	#0   cin = 1;	
 
-	#20  a = $random;	
-	#0   b = $random;	
-	#0   cin = $random;	
+	#20  a = 1;	
+	#0   b = 0;	
+	#0   cin = 0;	
 
-	#20  a = $random;	
-	#0   b = $random;	
-	#0   cin = $random;	
+	#20  a = 1;	
+	#0   b = 0;	
+	#0   cin = 1;	
 
-	#20  a = $random;	
-	#0   b = $random;	
-	#0   cin = $random;	
+	#20  a = 1;	
+	#0   b = 1;	
+	#0   cin = 0;	
 
-	#20  a = $random;	
-	#0   b = $random;	
-	#0   cin = $random;	
+	#20  a = 1;	
+	#0   b = 1;	
+	#0   cin = 1;	
 
-	#20  a = $random;	
-	#0   b = $random;	
-	#0   cin = $random;		
+	#20  a = 1;	
+	#0   b = 1;	
+	#0   cin = 1;	
 	
      end
 
@@ -124,5 +124,22 @@ endmodule
 //         assert(sum == 1) $display("Test case 8: Pass");
 //         assert(cout == 1) $display("Test case 8: Pass");
 //     end
+
+// endmodule
+
+
+
+
+
+// module FullAdder(
+//     input  logic                 a,         // input a
+//     input  logic                 b,         // input b
+//     input  logic                 cin,       // carry in
+//     output logic                 cout,      // carry out
+//     output logic                 s          // sum
+// );
+
+// assign cout = (a & b & cin) | (a & cin & ~b) | (b & cin & ~a);
+// assign s = (a ^ b ^ cin);
 
 // endmodule

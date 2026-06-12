@@ -9,7 +9,7 @@ jax.config.update("jax_enable_x64", True)
 
 
 def ybus(bus_data, branch_data, baseMVA=100.0):
-    """Build the bus admittance matrix (same pi-model as your MATLAB code)."""
+    """Build the bus admittance matrix using the pi-line model."""
     num_buses = max(bus['bus_i'] for bus in bus_data)
     Ybus = np.zeros((num_buses, num_buses), dtype=complex)
 
@@ -35,8 +35,8 @@ def ybus(bus_data, branch_data, baseMVA=100.0):
 
 def calculate_mismatch(x_flat, *, Ybus, P_spec, Q_spec, non_slack, pq, Va_init, Vm_init):
     """
-    Mismatch function (defined OUTSIDE newton_raphson as you requested).
-    JAX automatically differentiates this to get the Jacobian.
+    Mismatch function is written with JAX so the Jacobian matrix isobtained automatically
+    by differentiation instead of coding the partial derivatives by hand.
     """
     # Reconstruct full Va and Vm vectors from the flat state vector
     va = jnp.array(Va_init).at[non_slack].set(x_flat[:len(non_slack)])
@@ -56,10 +56,11 @@ def calculate_mismatch(x_flat, *, Ybus, P_spec, Q_spec, non_slack, pq, Va_init, 
     return jnp.concatenate([dP[non_slack], dQ[pq]])
 
 
-def newton_raphson(bus_data, branch_data, baseMVA=100.0, max_iter=50, tol=1e-4, damping=1.0):
-    """Newton-Raphson power flow solver using JAX for the Jacobian."""
+def newton_raphson(bus_data, branch_data, baseMVA, max_iter, tol, damping):
+    """Newton-Raphson power flow solver using JAX for the Jacobian matrix."""
     num_buses = max(bus['bus_i'] for bus in bus_data)
     Ybus_np = ybus(bus_data, branch_data, baseMVA)          # NumPy version for final calculations
+    
 
     # Prepare indices and static data
     bus_types = np.array([bus.get('type', 1) for bus in bus_data])
@@ -70,7 +71,7 @@ def newton_raphson(bus_data, branch_data, baseMVA=100.0, max_iter=50, tol=1e-4, 
     P_spec = np.array([(bus.get('Pg', 0.0) - bus.get('Pd', 0.0)) / baseMVA for bus in bus_data])
     Q_spec = np.array([(bus.get('Qg', 0.0) - bus.get('Qd', 0.0)) / baseMVA for bus in bus_data])
 
-    Va_init = np.array([np.deg2rad(bus.get('Va', 0.0)) for bus in bus_data])
+    Va_init = np.array([np.deg2rad(bus.get('Va', 0.0)) for bus in bus_data]) # immediately converts initial angles to radians for the internal solver state
     Vm_init = np.array([bus.get('Vm', 1.0) for bus in bus_data])
 
     # Convert everything to JAX arrays for the mismatch function
@@ -85,7 +86,7 @@ def newton_raphson(bus_data, branch_data, baseMVA=100.0, max_iter=50, tol=1e-4, 
     # Initial flat state vector
     x = jnp.concatenate([Va_init_jnp[non_slack_jnp], Vm_init_jnp[pq_jnp]])
 
-    # Create the JAX mismatch function (with all fixed data baked in)
+    # Create the JAX mismatch function
     mismatch_fn = partial(
         calculate_mismatch,
         Ybus=Ybus_jnp,
@@ -99,8 +100,6 @@ def newton_raphson(bus_data, branch_data, baseMVA=100.0, max_iter=50, tol=1e-4, 
 
     # JAX automatically builds and JIT-compiles the Jacobian
     get_jacobian = jax.jit(jacobian(mismatch_fn))
-
-    print("Starting JAX Newton-Raphson...")
 
     success = False
     iterations = 0
@@ -145,7 +144,7 @@ def newton_raphson(bus_data, branch_data, baseMVA=100.0, max_iter=50, tol=1e-4, 
     slackP_MW = P_inj[slack_idx]
     slackQ_MVAr = Q_inj[slack_idx]
 
-    # Branch power flows (exactly like your MATLAB code)
+    # Branch power flows and losses
     branch_flow = []
     for branch in branch_data:
         f_idx = branch['fbus'] - 1
@@ -179,7 +178,7 @@ def newton_raphson(bus_data, branch_data, baseMVA=100.0, max_iter=50, tol=1e-4, 
 
     return {
         'Vm': final_vm,
-        'Va_deg': np.rad2deg(final_va),
+        'Va_deg': np.rad2deg(final_va), # convert back to degrees for output
         'success': success,
         'iterations': iterations,
         'max_mismatch': max_mismatch_val,

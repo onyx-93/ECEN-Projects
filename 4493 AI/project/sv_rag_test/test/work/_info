@@ -1,0 +1,70 @@
+m255
+K4
+z2
+!s99 nomlopt
+!s11f vlog 2021.3 2021.07, Jul 13 2021
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 dC:/Users/Owner/GitHub/ECEN-Projects/4493 AI/project/sv_rag_test/test
+T_opt
+Z1 !s110 1777608927
+VmVZ=[ZO?6m0B^5e]SO9DA0
+04 2 4 work tb fast 0
+=1-484d7eca8aaf-69f428df-1c0-14694
+!s124 OEM100
+o-quiet -auto_acc_if_foreign -work work +acc
+Z2 tCvgOpt 0
+n@_opt
+OL;O;2021.3;73
+vfulladder
+Z3 DXx6 sv_std 3 std 0 22 9oUSJO;AeEaW`l:M@^WG92
+R1
+!i10b 1
+!s100 F3E4`8`5?WZbQ;O]][X]Q2
+IG_Yz0LIXLFzSMCLETbb9V2
+S1
+R0
+w1777608411
+8full_adder.sv
+Ffull_adder.sv
+!i122 0
+L0 1 6
+Z4 VDg1SIo80bB@j0V0VzS_@n1
+Z5 OL;L;2021.3;73
+r1
+!s85 0
+31
+Z6 !s108 1777608926.000000
+Z7 !s107 full_adder_tb.sv|full_adder.sv|
+Z8 !s90 -reportprogress|300|full_adder.sv|full_adder_tb.sv|
+!i113 0
+Z9 o-L mtiAvm -L mtiRnm -L mtiOvm -L mtiUvm -L mtiUPF -L infact
+R2
+vtb
+R3
+R1
+!i10b 1
+!s100 ;YA5PKiQV8PYJ>[zoPTg[2
+I^fFHjzn6nCZ`C4MVaAT>40
+S1
+R0
+w1777608528
+8full_adder_tb.sv
+Ffull_adder_tb.sv
+!i122 0
+L0 2 63
+R4
+R5
+r1
+!s85 0
+31
+R6
+R7
+R8
+!i113 0
+R9
+R2
